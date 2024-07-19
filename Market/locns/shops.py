@@ -58,7 +58,7 @@ class Gen:
             variant = variants[i%len(variants)]
             layouts = ", ".join(in_layout[i])
 
-            when = ['"HasMod": "ceruleandeep.MarketDay"']
+            when = ['"HasMod": "lisonaza.MarketDay"']
             if i in exclude_joseph:
                 when.append(f'HasMod |contains={joseph}": false')
             if i in exclude_paisley:

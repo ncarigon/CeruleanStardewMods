@@ -68,7 +68,7 @@ namespace MarketDay.API
                 return;
             }
 
-            Conditions.Initialize(MarketDay.VerboseLogging, "ceruleandeep.MarketDay");
+            Conditions.Initialize(MarketDay.VerboseLogging, "lisonaza.MarketDay");
 
         }
 

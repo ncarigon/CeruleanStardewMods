@@ -6,7 +6,7 @@
     "PatchMode": "Overlay",
     "FromArea": {"X": 0, "Y": 0, "Width": 5, "Height": 5},
     "ToArea": {"X": {{x}}, "Y": {{y}}, "Width": 5, "Height": 5},
-    "MapTiles": [{"Position": { "X": {{shopx}}, "Y": {{y}} }, "Layer": "Back", "SetProperties": {"ceruleandeep.MarketDay.GrangeShop": "Random"}}],
+    "MapTiles": [{"Position": { "X": {{shopx}}, "Y": {{y}} }, "Layer": "Back", "SetProperties": {"lisonaza.MarketDay.GrangeShop": "Random"}}],
     "When": {
         "MarketLayout": "{{layouts}}", "DayOfWeek": "{% raw %}{{MarketDay}}{% endraw %}", "Weather": "Sun, Wind", "HasValue:{% raw %}{{DayEvent}}{% endraw %}": "false",
         {{hasmod}}

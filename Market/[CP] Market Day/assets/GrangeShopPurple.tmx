@@ -1823,7 +1823,7 @@
  <objectgroup id="9" name="Front">
   <object id="66" name="TileData" x="16" y="0" width="16" height="16">
    <properties>
-    <property name="ceruleandeep.MarketDay.GrangeShop" value="Any"/>
+    <property name="lisonaza.MarketDay.GrangeShop" value="Any"/>
    </properties>
   </object>
  </objectgroup>

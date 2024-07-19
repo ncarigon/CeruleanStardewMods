@@ -93,7 +93,7 @@ GPLv3
 Credits
 ---
 
-* by ceruleandeep
+* by lisonaza
 * Uses code from ChroniclerCherry's Shop Tile Framework
 * Uses code from aedenthorn's Persistent Grange Stand
 
@@ -131,11 +131,11 @@ Game1::_newDayAfterFade()
 etc
 ---
 
-patch reload ceruleandeep.MarketDay.CP
-patch summary ceruleandeep.MarketDay.CP
-patch summary ceruleandeep.MarketDay
+patch reload lisonaza.MarketDay.CP
+patch summary lisonaza.MarketDay.CP
+patch summary lisonaza.MarketDay
 
-patch reload ceruleandeep.MarketDay.Wizard
+patch reload lisonaza.MarketDay.Wizard
 
 eventforget 117780001
 responseforget 117789010
@@ -154,7 +154,7 @@ responseforget 117789041
 responseforget 117789050
 responseforget 117789051
 
-patch reload ceruleandeep.MarketDay.Wizard
+patch reload lisonaza.MarketDay.Wizard
 debug ebi 117780001
 
   "37": "Wood Sign/5/-300/Crafting -9/Use an item on this to change what's displayed. The item won't be consumed./true/true/0/Wood Sign",
