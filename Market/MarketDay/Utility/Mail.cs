@@ -60,7 +60,7 @@ namespace MarketDay.Utility
             {
                 MarketDay.Log($"Loading prize mail {mailKey}", LogLevel.Trace);
                 var attachment = AttachmentForPrizeMail(ObjName, Flavor, Stack, Quality);
-                MailDao.SaveLetter(
+                MailRepository.SaveLetter(
                     new Letter(mailKey, Text, new List<Item> {attachment}, 
                         l => !Game1.player.mailReceived.Contains(l.Id), 
                         l => Game1.player.mailReceived.Add(l.Id),
@@ -71,7 +71,7 @@ namespace MarketDay.Utility
             else
             {
                 MarketDay.Log($"Loading non-prize mail {mailKey}", LogLevel.Trace);
-                MailDao.SaveLetter(
+                MailRepository.SaveLetter(
                     new Letter(mailKey, Text, 
                         l => !Game1.player.mailReceived.Contains(l.Id), 
                         l => Game1.player.mailReceived.Add(l.Id),
@@ -84,10 +84,10 @@ namespace MarketDay.Utility
         private static Object AttachmentForPrizeMail(string ObjName, string Flavor, int Stack, int Quality=0)
         {
             var idx = ItemsUtil.GetIndexByName(ObjName);
-            if (idx < 0)
+            if (Int32.Parse(idx) < 0)
             {
                 MarketDay.Log($"Could not find prize object {ObjName}", LogLevel.Error);
-                idx = 169;
+                idx = "169";
             }
 
             var stack = Math.Max(Stack, 1);
@@ -96,10 +96,10 @@ namespace MarketDay.Utility
             if (Flavor is null || Flavor.Length <= 0) return attachment;
             
             var prIdx = ItemsUtil.GetIndexByName(Flavor);
-            if (prIdx < 0)
+            if (Int32.Parse(idx) < 0)
             {
                 MarketDay.Log($"Could not find flavor object {Flavor}", LogLevel.Error);
-                prIdx = 258;
+                prIdx = "258";
             }
             attachment.preservedParentSheetIndex.Value = prIdx;
             attachment.preserve.Value = ObjName switch

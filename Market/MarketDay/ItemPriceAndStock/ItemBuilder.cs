@@ -5,6 +5,7 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System.Collections.Generic;
 using MarketDay.Utility;
+using System;
 
 namespace MarketDay.ItemPriceAndStock
 {
@@ -38,7 +39,7 @@ namespace MarketDay.ItemPriceAndStock
         /// <returns></returns>
         public bool AddItemToStock(string itemName, double priceMultiplier = 1)
         {
-            int id;
+            string id;
             if (itemName.StartsWith(CategorySearchPrefix))
             {
                 var offset = CategorySearchPrefix.Length + 1;
@@ -52,9 +53,9 @@ namespace MarketDay.ItemPriceAndStock
                 id = ItemsUtil.GetIndexByName(itemName, _itemStock.ItemType);
             }
             
-            if (id >= 0) return AddItemToStock(id, priceMultiplier);
+            if (id != "-1" && id != "0") return AddSpecificItemToStock(id, priceMultiplier);
             var item = ItemsUtil.GetDGAObjectByName(itemName, _itemStock.ItemType);
-            if (item is not null) return AddItemToStock(item, priceMultiplier);
+            if (item is not null) return AddSpecificItemToStock(item, priceMultiplier);
             MarketDay.Log($"{_itemStock.ItemType} named \"{itemName}\" could not be added to the Shop {_itemStock.ShopName}", LogLevel.Trace);
             return false;
         }
@@ -65,12 +66,12 @@ namespace MarketDay.ItemPriceAndStock
         /// <param name="itemId">the id of the item</param>
         /// <param name="priceMultiplier"></param>
         /// <returns></returns>
-        public bool AddItemToStock(int itemId, double priceMultiplier = 1)
+        public bool AddSpecificItemToStock(string itemId, double priceMultiplier = 1)
         {
 
             MarketDay.Log($"Adding item ID {itemId} to {_itemStock.ShopName}", LogLevel.Debug, true);
 
-            if (itemId < 0)
+            if (itemId == "-1")
             {
                 MarketDay.Log($"{_itemStock.ItemType} of ID {itemId} could not be added to the Shop {_itemStock.ShopName}", LogLevel.Trace);
                 return false;
@@ -82,10 +83,10 @@ namespace MarketDay.ItemPriceAndStock
             }
 
             var item = CreateItem(itemId);
-            return item != null && AddItemToStock(item, priceMultiplier);
+            return item != null && AddSpecificItemToStock(item, priceMultiplier);
         }
 
-        private bool AddItemToStock(ISalable item, double priceMultiplier)
+        private bool AddSpecificItemToStock(ISalable item, double priceMultiplier)
         {
             if (item is null)
             {
@@ -113,16 +114,17 @@ namespace MarketDay.ItemPriceAndStock
         /// </summary>
         /// <param name="itemId"></param>
         /// <returns></returns>
-        private ISalable CreateItem(int itemId)
+        private ISalable CreateItem(string itemId)
         {
             switch (_itemStock.ItemType)
             {
                 case "Object":
                 case "Seed":
-                    return new Object(itemId, _itemStock.Stock, _itemStock.IsRecipe, quality: _itemStock.Quality);
+                    return new StardewValley.Object(itemId, _itemStock.Stock, _itemStock.IsRecipe, quality: _itemStock.Quality);
                 case "BigCraftable":
-                    return new Object(Vector2.Zero, itemId) { Stack = _itemStock.Stock, IsRecipe = _itemStock.IsRecipe };
-                case "Clothing":
+                    return new StardewValley.Object(Vector2.Zero, itemId) { Stack = _itemStock.Stock, IsRecipe = _itemStock.IsRecipe };
+                case "Shirt":
+                case "Pants":
                     return new Clothing(itemId);
                 case "Ring":
                     return new Ring(itemId);
@@ -152,17 +154,17 @@ namespace MarketDay.ItemPriceAndStock
             var price = (_itemStock.StockPrice == -1) ? (int)(item.salePrice()* _itemStock.DefaultSellPriceMultiplier) : _itemStock.StockPrice;
             price = (int)(price*priceMultiplier);
 
-            if (_itemStock.CurrencyObjectId == -1) // no currency item
+            if (_itemStock.CurrencyObjectId == "-1") // no currency item
             {
                 priceStockCurrency = new[] { price, _itemStock.Stock };
             }
             else if (_itemStock.StockCurrencyStack == -1) //no stack provided for currency item so defaults to 1
             {
-                priceStockCurrency = new[] { price, _itemStock.Stock, _itemStock.CurrencyObjectId };
+                priceStockCurrency = new[] { price, _itemStock.Stock, int.Parse(_itemStock.CurrencyObjectId) };
             }
             else //both currency item and stack provided
             {
-                priceStockCurrency = new[] { price, _itemStock.Stock, _itemStock.CurrencyObjectId, _itemStock.StockCurrencyStack };
+                priceStockCurrency = new[] { price, _itemStock.Stock, int.Parse(_itemStock.CurrencyObjectId), _itemStock.StockCurrencyStack };
             }
 
             return priceStockCurrency;

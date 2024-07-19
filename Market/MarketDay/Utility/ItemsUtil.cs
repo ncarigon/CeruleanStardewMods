@@ -13,10 +13,20 @@ namespace MarketDay.Utility
     /// </summary>
     public static class ItemsUtil
     {
-        public static Dictionary<string, IDictionary<int, string>> ObjectInfoSource { get; set; }
+        // public static Dictionary<string, IDictionary<string, string>> ObjectInfoSource { get; set; }
+        public static Dictionary<string, StardewValley.GameData.Objects.ObjectData> ObjectInfoSourceObject { get; set; }
+        public static Dictionary<string, StardewValley.GameData.BigCraftables.BigCraftableData> ObjectInfoSourceBigCraftable { get; set; }
+        public static Dictionary<string, StardewValley.GameData.Shirts.ShirtData> ObjectInfoSourceShirt { get; set; }
+        public static Dictionary<string, StardewValley.GameData.Pants.PantsData> ObjectInfoSourcePants { get; set; }
+        public static Dictionary<string, StardewValley.GameData.Objects.ObjectData> ObjectInfoSourceRing { get; set; }
+        public static Dictionary<string, string> ObjectInfoSourceHat { get; set; }
+        public static Dictionary<string, string> ObjectInfoSourceBoot { get; set; }
+        public static Dictionary<string, string> ObjectInfoSourceFurniture { get; set; }
+        public static Dictionary<string, StardewValley.GameData.Weapons.WeaponData> ObjectInfoSourceWeapon { get; set; }
+
         public static List<string> RecipesList;
-        private static Dictionary<int, string> _fruitTreeData;
-        private static Dictionary<int, string> _cropData;
+        private static Dictionary<string, StardewValley.GameData.FruitTrees.FruitTreeData> _fruitTreeData;
+        private static Dictionary<string, StardewValley.GameData.Crops.CropData> _cropData;
 
         public static List<string> PacksToRemove = new List<string>();
         public static List<string> RecipePacksToRemove = new List<string>();
@@ -29,17 +39,29 @@ namespace MarketDay.Utility
         public static void UpdateObjectInfoSource()
         {
             //load up all the object information into a static dictionary
-            ObjectInfoSource = new Dictionary<string, IDictionary<int, string>>
-            {
-                {"Object", Game1.objectInformation},
-                {"BigCraftable", Game1.bigCraftablesInformation},
-                {"Clothing", Game1.clothingInformation},
-                {"Ring", Game1.objectInformation},
-                {"Hat", MarketDay.helper.GameContent.Load<Dictionary<int, string>>(@"Data/hats")},
-                {"Boot", MarketDay.helper.GameContent.Load<Dictionary<int, string>>(@"Data/Boots")},
-                {"Furniture", MarketDay.helper.GameContent.Load<Dictionary<int, string>>(@"Data/Furniture")},
-                {"Weapon", MarketDay.helper.GameContent.Load<Dictionary<int, string>>(@"Data/weapons")}
-            };
+
+            ObjectInfoSourceObject = DataLoader.Objects(Game1.content);
+            ObjectInfoSourceBigCraftable = DataLoader.BigCraftables(Game1.content);
+            ObjectInfoSourceShirt = DataLoader.Shirts(Game1.content);
+            ObjectInfoSourcePants = DataLoader.Pants(Game1.content);
+            ObjectInfoSourceRing = DataLoader.Objects(Game1.content);
+            ObjectInfoSourceHat = DataLoader.Hats(Game1.content);
+            ObjectInfoSourceBoot = DataLoader.Boots(Game1.content);
+            ObjectInfoSourceFurniture = DataLoader.Furniture(Game1.content);
+            ObjectInfoSourceWeapon = DataLoader.Weapons(Game1.content);
+
+            // ObjectInfoSource = new Dictionary<string, IDictionary<string, string>>
+            // {
+            //     {"Object", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/Objects")},
+            //     {"BigCraftable", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/BigCraftables")},
+            //     {"Shirt", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/Shirts")},
+            //     {"Pants", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/Pants")},
+            //     {"Ring", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/Objects")},
+            //     // {"Hat", MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Strings/hats")},
+            //     // {"Boot", MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Strings/Boots")},
+            //     {"Furniture", MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Strings/Furniture")},
+            //     {"Weapon", MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Strings/weapons")}
+            // };
 
             //load up recipe information
             RecipesList = MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Data/CraftingRecipes").Keys
@@ -51,8 +73,8 @@ namespace MarketDay.Utility
             RecipesList = RecipesList.Select(s => s + " Recipe").ToList();
 
             //load up tree and crop data
-            _fruitTreeData = MarketDay.helper.GameContent.Load<Dictionary<int, string>>(@"Data/fruitTrees");
-            _cropData = MarketDay.helper.GameContent.Load<Dictionary<int, string>>(@"Data/Crops");
+            _fruitTreeData = MarketDay.helper.GameContent.Load<Dictionary<string, StardewValley.GameData.FruitTrees.FruitTreeData>>(@"Data/fruitTrees");
+            _cropData = MarketDay.helper.GameContent.Load<Dictionary<string, StardewValley.GameData.Crops.CropData>>(@"Data/Crops");
         }
 
         /// <summary>
@@ -86,7 +108,7 @@ namespace MarketDay.Utility
             switch (a)
             {
                 case Hat aHat when b is Hat bHat:
-                    return aHat.which.Value == bHat.which.Value;
+                    return aHat.obsolete_which.Value == bHat.obsolete_which.Value;
                 case Tool aTool when b is Tool bTool:  // includes weapons
                     return aTool.InitialParentTileIndex == bTool.InitialParentTileIndex;
                 case Boots aBoots when b is Boots bBoots:
@@ -112,17 +134,31 @@ namespace MarketDay.Utility
         /// <param name="name">name of the item</param>
         /// <param name="itemType"></param>
         /// <returns></returns>
-        public static int GetIndexByName(string name, string itemType = "Object")
+        public static string GetIndexByName(string name, string itemType = "Object")
         {
-            foreach (var (index, objectData) in ObjectInfoSource[itemType])
+            switch (itemType)
             {
-                if (objectData.Split('/')[0] == name)
-                {
-                    return index;
-                }
+                case "Object":
+                    foreach (var (index, objectData) in ObjectInfoSourceObject){ if (objectData.Name == name) { return index; } } return "-1";
+                case "BigCraftable":
+                    foreach (var (index, objectData) in ObjectInfoSourceBigCraftable){ if (objectData.Name == name) { return index; } } return "-1";
+                case "Shirt":
+                    foreach (var (index, objectData) in ObjectInfoSourceShirt){ if (objectData.Name == name) { return index; } } return "-1";
+                case "Pants":
+                    foreach (var (index, objectData) in ObjectInfoSourcePants){ if (objectData.Name == name) { return index; } } return "-1";
+                case "Ring":
+                    foreach (var (index, objectData) in ObjectInfoSourceRing){ if (objectData.Name == name) { return index; } } return "-1";
+                case "Hat":
+                    foreach (var (index, objectData) in ObjectInfoSourceHat){ if (objectData.Split('/')[0] == name) { return index; } } return "-1";
+                case "Boot":
+                    foreach (var (index, objectData) in ObjectInfoSourceBoot){ if (objectData.Split('/')[0] == name) { return index; } } return "-1";
+                case "Furniture":
+                    foreach (var (index, objectData) in ObjectInfoSourceFurniture){ if (objectData.Split('/')[0] == name) { return index; } } return "-1";
+                case "Weapon":
+                    foreach (var (index, objectData) in ObjectInfoSourceWeapon){ if (objectData.Name == name) { return index; } } return "-1";
             }
 
-            return -1;
+            return "-1";
         }
 
         public static ISalable GetDGAObjectByName(string name, string itemType = "Object")
@@ -153,19 +189,46 @@ namespace MarketDay.Utility
         /// <param name="needle">pattern to search for</param>
         /// <param name="itemType"></param>
         /// <returns></returns>
-        public static int GetIndexByCategory(string needle, string itemType = "Object")
+        public static string GetIndexByCategory(string needle, string itemType = "Object")
         {
-            var candidates = new List<int>();
-            foreach (var (index, objectData) in ObjectInfoSource[itemType])
+            var candidates = new List<string>();
+            MarketDay.Log($"{itemType}/{needle}", LogLevel.Info);
+            switch (itemType)
             {
-                if (objectData.Split('/')[3].Contains(needle))
-                {
-                    candidates.Add(index);
-                }
+                case "Object":
+                    foreach (var (index, objectData) in ObjectInfoSourceObject){ if (objectData.Type.Contains(needle)){ candidates.Add(index); } }
+                    break;
+                // case "BigCraftable":
+                //     foreach (var (index, objectData) in ObjectInfoSourceBigCraftable){ if (objectData.Type.Contains(needle)){ candidates.Add(index); } }
+                //     break;
+                // case "Shirt":
+                //     foreach (var (index, objectData) in ObjectInfoSourceShirt){ if (objectData.Category.ToString().Contains(needle)){ candidates.Add(index); } }
+                //     break;
+                // case "Pants":
+                //     foreach (var (index, objectData) in ObjectInfoSourcePants){ if (objectData.Category.ToString().Contains(needle)){ candidates.Add(index); } }
+                //     break;
+                case "Ring":
+                    foreach (var (index, objectData) in ObjectInfoSourceRing){ if (objectData.Type.Contains(needle)){ candidates.Add(index); } }
+                    break;
+                case "Hat":
+                    foreach (var (index, objectData) in ObjectInfoSourceHat){ if (objectData.Split('/')[3].Contains(needle)){ candidates.Add(index); } }
+                    break;
+                case "Boot":
+                    foreach (var (index, objectData) in ObjectInfoSourceBoot){ if (objectData.Split('/')[3].Contains(needle)){ candidates.Add(index); } }
+                    break;
+                case "Furniture":
+                    foreach (var (index, objectData) in ObjectInfoSourceFurniture){ if (objectData.Split('/')[3].Contains(needle)){ candidates.Add(index); } }
+                    break;
+                // case "Weapon":
+                //     foreach (var (index, objectData) in ObjectInfoSourceWeapon){ if (objectData.Category.ToString().Contains(needle)){ candidates.Add(index); } }
+                //     break;
             }
 
-            if (candidates.Count > 0) return candidates[Game1.random.Next(candidates.Count)];
-            return -1;
+            if (candidates.Count > 0) {
+                MarketDay.Log($"{candidates[0]}", LogLevel.Info);
+                return candidates[Game1.random.Next(candidates.Count)].ToString();
+            }
+            return "-1";
         }
 
         /// <summary>
@@ -174,16 +237,42 @@ namespace MarketDay.Utility
         /// <param name="needle">pattern to search for</param>
         /// <param name="itemType"></param>
         /// <returns></returns>
-        public static int GetIndexByMatch(string needle, string itemType = "Object")
+        public static string GetIndexByMatch(string needle, string itemType = "Object")
         {
-            var candidates = new List<int>();
-            foreach (var (index, objectData) in ObjectInfoSource[itemType])
+            var candidates = new List<string>();
+            switch (itemType)
             {
-                if (objectData.Split('/')[0].Contains(needle)) candidates.Add(index);
+                case "Object":
+                    foreach (var (index, objectData) in ObjectInfoSourceObject){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    break;
+                case "BigCraftable":
+                    foreach (var (index, objectData) in ObjectInfoSourceBigCraftable){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    break;
+                case "Shirt":
+                    foreach (var (index, objectData) in ObjectInfoSourceShirt){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    break;
+                case "Pants":
+                    foreach (var (index, objectData) in ObjectInfoSourcePants){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    break;
+                case "Ring":
+                    foreach (var (index, objectData) in ObjectInfoSourceRing){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    break;
+                case "Hat":
+                    foreach (var (index, objectData) in ObjectInfoSourceHat){ if (objectData.Split('/')[0].Contains(needle)) { candidates.Add(index); } }
+                    break;
+                case "Boot":
+                    foreach (var (index, objectData) in ObjectInfoSourceBoot){ if (objectData.Split('/')[0].Contains(needle)) { candidates.Add(index); } }
+                    break;
+                case "Furniture":
+                    foreach (var (index, objectData) in ObjectInfoSourceFurniture){ if (objectData.Split('/')[0].Contains(needle)) { candidates.Add(index); } }
+                    break;
+                case "Weapon":
+                    foreach (var (index, objectData) in ObjectInfoSourceWeapon){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    break;
             }
 
-            if (candidates.Count > 0) return candidates[Game1.random.Next(candidates.Count)];
-            return -1;
+            if (candidates.Count > 0) return candidates[Game1.random.Next(candidates.Count)].ToString();
+            return "-1";
         }
 
         /// <summary>
@@ -193,7 +282,9 @@ namespace MarketDay.Utility
         /// <returns>True if it's a valid type, false if not</returns>
         public static bool CheckItemType(string itemType)
         {
-            return (itemType == "Seed" || ObjectInfoSource.ContainsKey(itemType));
+            string searchString = "Object|BigCraftable|Shirt|Pants|Ring|Hat|Furniture|Weapon";
+
+            return itemType == "Seed" || searchString.Contains(itemType);
         }
 
         /// <summary>
@@ -201,37 +292,37 @@ namespace MarketDay.Utility
         /// </summary>
         /// <param name="cropName">The name of the crop object</param>
         /// <returns>The ID of the seed object if found, -1 if not</returns>
-        public static int GetSeedId(string cropName)
+        public static string GetSeedId(string cropName)
         {
             //int cropID = MarketDay.JsonAssets.GetCropId(cropName);
             int cropId = APIs.JsonAssets.GetCropId(cropName);
-            foreach (KeyValuePair<int, string> kvp in _cropData)
+            foreach (KeyValuePair<string, StardewValley.GameData.Crops.CropData> kvp in _cropData)
             {
                 //find the tree id in crops information to get seed id
-                Int32.TryParse(kvp.Value.Split('/')[2], out int id);
+                Int32.TryParse(kvp.Value.ToString(), out int id);
                 if (cropId == id)
                     return kvp.Key;
             }
 
-            return -1;
+            return "-1";
         }
 
         /// <summary>
         /// Given the name of a tree crop, return the ID of its sapling object
         /// </summary>
         /// <returns>The ID of the sapling object if found, -1 if not</returns>
-        public static int GetSaplingId(string treeName)
+        public static string GetSaplingId(string treeName)
         {
-            int treeId = APIs.JsonAssets.GetFruitTreeId(treeName);
-            foreach (KeyValuePair<int, string> kvp in _fruitTreeData)
+            string treeId = APIs.JsonAssets.GetFruitTreeId(treeName).ToString();
+            foreach (KeyValuePair<string, StardewValley.GameData.FruitTrees.FruitTreeData> kvp in _fruitTreeData)
             {
                 //find the tree id in fruitTrees information to get sapling id
-                Int32.TryParse(kvp.Value.Split('/')[0], out int id);
-                if (treeId == id)
-                    return kvp.Key;
+                Int32.TryParse(kvp.Value.DisplayName, out int id);
+                if (treeId == id.ToString())
+                    return kvp.Key.ToString();
             }
 
-            return -1;
+            return "-1";
         }
 
         public static void RegisterItemsToRemove()
@@ -263,18 +354,18 @@ namespace MarketDay.Utility
 
                 if (crops != null)
                 {
-                    foreach (int seedId in crops.Select(GetSeedId))
+                    foreach (string seedId in crops.Select(GetSeedId))
                     {
-                        ItemsToRemove.Add(ObjectInfoSource["Object"][seedId].Split('/')[0]);
+                        ItemsToRemove.Add(ObjectInfoSourceObject[seedId].Name);
                     }
                 }
 
                 var trees = APIs.JsonAssets.GetAllFruitTreesFromContentPack(pack);
                 if (trees != null)
                 {
-                    foreach (int saplingID in trees.Select(GetSaplingId))
+                    foreach (string saplingID in trees.Select(GetSaplingId))
                     {
-                        ItemsToRemove.Add(ObjectInfoSource["Object"][saplingID].Split('/')[0]);
+                        ItemsToRemove.Add(ObjectInfoSourceObject[saplingID].Name);
                     }
                 }
 
@@ -317,16 +408,16 @@ namespace MarketDay.Utility
                 stock.Remove(item);
         }
 
-        public static bool IsInSeasonCrop(int itemId)
+        public static bool IsInSeasonCrop(string itemId)
         {
             if (_cropData.ContainsKey(itemId))
             {
-                return _cropData[itemId].Split('/')[1].Contains(Game1.currentSeason);
+                return _cropData[itemId].Seasons.Contains(Game1.season);
             }
 
             if (_fruitTreeData.ContainsKey(itemId))
             {
-                return _fruitTreeData[itemId].Split('/')[1].Contains(Game1.currentSeason);
+                return _fruitTreeData[itemId].Seasons.Contains(Game1.season);
             }
 
             return false;

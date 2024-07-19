@@ -5,7 +5,7 @@
   "Description": "Market Day",
   "UniqueID": "ceruleandeep.MarketDay",
   "EntryDll": "MarketDay.dll",
-  "MinimumApiVersion": "3.14.0",
+  "MinimumApiVersion": "4.0.0",
   "Dependencies": [
     {
       "UniqueID": "Pathoschild.ContentPatcher",

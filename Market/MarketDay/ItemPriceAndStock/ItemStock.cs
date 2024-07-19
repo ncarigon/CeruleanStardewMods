@@ -5,6 +5,7 @@ using System.Linq;
 using MarketDay.API;
 using MarketDay.Data;
 using MarketDay.Utility;
+using System;
 
 namespace MarketDay.ItemPriceAndStock
 {
@@ -14,7 +15,7 @@ namespace MarketDay.ItemPriceAndStock
     /// </summary>
     public class ItemStock : ItemStockModel
     {
-        internal int CurrencyObjectId;
+        internal string CurrencyObjectId;
         internal double DefaultSellPriceMultiplier;
         internal Dictionary<double, string[]> PriceMultiplierWhen;
         internal string ShopName;
@@ -123,7 +124,7 @@ namespace MarketDay.ItemPriceAndStock
 
             foreach (var itemId in ItemIDs)
             {
-                _builder.AddItemToStock(itemId, priceMultiplier);
+                _builder.AddSpecificItemToStock(itemId, priceMultiplier);
             }
         }
 
@@ -169,9 +170,9 @@ namespace MarketDay.ItemPriceAndStock
                         foreach (string crop in crops)
                         {
                             if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(crop)) continue;
-                            int id = ItemsUtil.GetSeedId(crop);
-                            if (id >0)
-                                _builder.AddItemToStock(id, priceMultiplier);
+                            string id = ItemsUtil.GetSeedId(crop);
+                            if (id != "-1")
+                                _builder.AddSpecificItemToStock(id, priceMultiplier);
                         }
                     }
 
@@ -181,9 +182,9 @@ namespace MarketDay.ItemPriceAndStock
                         foreach (string tree in trees)
                         {
                             if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(tree)) continue;
-                            int id = ItemsUtil.GetSaplingId(tree);
-                            if (id > 0)
-                                _builder.AddItemToStock(id, priceMultiplier);
+                            string id = ItemsUtil.GetSaplingId(tree);
+                            if (id != "-1")
+                                _builder.AddSpecificItemToStock(id, priceMultiplier);
                         }
                     }
 
@@ -218,7 +219,8 @@ namespace MarketDay.ItemPriceAndStock
                     return APIs.JsonAssets.GetAllObjectsFromContentPack(JAPack);
                 case "BigCraftable":
                     return APIs.JsonAssets.GetAllBigCraftablesFromContentPack(JAPack);
-                case "Clothing":
+                case "Shirt":
+                case "Pants":
                     return APIs.JsonAssets.GetAllClothingFromContentPack(JAPack);
                 case "Ring":
                     return APIs.JsonAssets.GetAllObjectsFromContentPack(JAPack);

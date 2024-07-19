@@ -25,13 +25,16 @@ namespace MarketDay.Shop
         /// </summary>
         public static void LoadContentPacks()
         {
+            MarketDay.Log("LoadContentPacks", LogLevel.Info);
             MarketDay.Log("Clearing content packs (what's the worst that could happen, right?)", LogLevel.Debug);
             foreach (var grangeShop in GrangeShops.Keys) GrangeShops.Remove(grangeShop);
             foreach (var animalShop in AnimalShops.Keys) GrangeShops.Remove(animalShop);
             
             MarketDay.Log("Adding Content Packs...", LogLevel.Info);
+            MarketDay.Log(MarketDay.helper.ContentPacks.GetOwned().ToString(), LogLevel.Debug);
             foreach (var contentPack in MarketDay.helper.ContentPacks.GetOwned())
             {
+                MarketDay.Log("ContentPack", LogLevel.Info);
                 if (!contentPack.HasFile("shops.json"))
                 {
                     MarketDay.Log($"No shops.json found from the mod {contentPack.Manifest.UniqueID}. " +
@@ -65,11 +68,14 @@ namespace MarketDay.Shop
         /// <param name="contentPack"></param>
         private static void RegisterShops(ContentPack data, IContentPack contentPack)
         {
+            MarketDay.Log("RegisterShops", LogLevel.Info);
             MarketDay.Config.ShopsEnabled ??= new Dictionary<string, bool>();
             if (data.GrangeShops != null)
             {
+                MarketDay.Log(data.GrangeShops.Length.ToString(), LogLevel.Debug);
                 foreach (var shopPack in data.GrangeShops)
                 {
+                    MarketDay.Log(shopPack.ShopName, LogLevel.Debug);
                     shopPack.ContentPack = contentPack;
 
                     if (shopPack.ShopName is null)

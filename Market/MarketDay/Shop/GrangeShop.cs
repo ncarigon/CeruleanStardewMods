@@ -18,7 +18,7 @@ namespace MarketDay.Shop
 {
     public class GrangeShop : ItemShop
     {
-        private const int WOOD_SIGN = 37;
+        private const string WOOD_SIGN = "37";
         private const double BUY_CHANCE = 0.75;
 
         private const int DisplayChestHidingOffsetY = 36;
@@ -204,11 +204,11 @@ namespace MarketDay.Shop
                 return;
             }
 
-            if (StockChest.items.Count <= 0) return;
-            for (var i = 0; i < StockChest.items.Count; i++)
+            if (StockChest.Items.Count <= 0) return;
+            for (var i = 0; i < StockChest.Items.Count; i++)
             {
-                var item = StockChest.items[i];
-                StockChest.items[i] = null;
+                var item = StockChest.Items[i];
+                StockChest.Items[i] = null;
                 if (item == null) continue;
                 Game1.player.team.returnedDonations.Add(item);
                 Game1.player.team.newLostAndFoundItems.Value = true;
@@ -319,7 +319,7 @@ namespace MarketDay.Shop
                 else
                 {
                     var rows = MarketDay.Progression.ShopSize / 3;
-                    Game1.activeClickableMenu = new StorageContainer(GrangeChest.items, MarketDay.Progression.ShopSize,
+                    Game1.activeClickableMenu = new StorageContainer(GrangeChest.Items, MarketDay.Progression.ShopSize,
                         rows, onGrangeChange,
                         StardewValley.Utility.highlightSmallObjects);
                 }
@@ -364,7 +364,31 @@ namespace MarketDay.Shop
                 _ => 0
             };
 
-            var shopMenu = new ShopMenu(ShopStock(), currency, null, OnPurchase);
+            // var shopMenu = new ShopMenu(ShopStock(), currency, null, OnPurchase);
+            // var shopMenu = new ShopMenu(
+            //     shopId: "MarketDayGrangeShop_"+ ShopName,
+            //     shopData: new StardewValley.GameData.Shops.ShopData(),
+            //     ownerData: null,
+            //     owner: null,
+            //     onPurchase: OnPurchase,
+            //     onSell: null,
+            //     playOpenSound: true
+            // );
+            //public ShopMenu(string shopId, List<ISalable> itemsForSale, int currency = 0, string who = null, Func<ISalable, Farmer, int, bool> on_purchase = null, Func<ISalable, bool> on_sell = null, bool playOpenSound = true)
+            List<ISalable> salables = new List<ISalable>();
+            foreach (var item in ShopStock())
+            {
+                salables.Add(item.Key);
+            }
+            var shopMenu = new ShopMenu(
+                shopId: "MarketDayGrangeShop_"+ ShopName,
+                itemsForSale: salables,
+                currency: currency,
+                who: null,
+                on_purchase: OnPurchase,
+                on_sell: null,
+                playOpenSound: true
+            );
 
             if (CategoriesToSellHere != null)
                 shopMenu.categoriesToSellHere = CategoriesToSellHere;
@@ -378,10 +402,10 @@ namespace MarketDay.Shop
 
             if (_portrait != null)
             {
-                shopMenu.portraitPerson = new NPC();
+                // shopMenu.portraitPerson = new NPC();
                 //only add a shop name the first time store is open each day so that items added from JA's side are only added once
-                if (!_shopOpenedToday) shopMenu.portraitPerson.Name = "MD." + ShopName;
-                shopMenu.portraitPerson.Portrait = _portrait;
+                // if (!_shopOpenedToday) shopMenu. = "MD." + ShopName;
+                shopMenu.portraitTexture = _portrait;
             }
 
             if (Quote != null)
@@ -404,11 +428,11 @@ namespace MarketDay.Shop
             
             MarketDay.Log($"OnPurchase {item.Name} {stack}", LogLevel.Trace);
 
-            for (var j = 0; j < GrangeChest.items.Count; j++)
+            for (var j = 0; j < GrangeChest.Items.Count; j++)
             {
-                if (GrangeChest.items[j] is null) continue;
-                if (!ItemsUtil.Equal(item, GrangeChest.items[j])) continue;
-                GrangeChest.items[j] = null;
+                if (GrangeChest.Items[j] is null) continue;
+                if (!ItemsUtil.Equal(item, GrangeChest.Items[j])) continue;
+                GrangeChest.Items[j] = null;
                 return false;
             }
 
@@ -452,7 +476,7 @@ namespace MarketDay.Shop
                 return stock;
             }
 
-            foreach (var stockItem in GrangeChest.items)
+            foreach (var stockItem in GrangeChest.Items)
             {
                 if (stockItem is null) continue;
 
@@ -493,7 +517,7 @@ namespace MarketDay.Shop
             owner.movementPause = 10000;
 
             var dialog = Get("spruik");
-            owner.showTextAboveHead(dialog, -1, 2, 1000);
+            owner.showTextAboveHead(dialog, default, 2, 1000);
             owner.Sprite.UpdateSourceRect();
 
             recentlyTended[owner] = Game1.timeOfDay;
@@ -505,7 +529,7 @@ namespace MarketDay.Shop
             var location = Game1.getLocationFromName("Town");
             var npc = location.characters.FirstOrDefault(n => n.Name == ShopName);
             if (npc is null) return null;
-            if (npc.getTileX() == (int) ownerX && npc.getTileY() == (int) ownerY) return npc;
+            if (npc.Tile.X == (int) ownerX && npc.Tile.Y == (int) ownerY) return npc;
             return null;
         }
 
@@ -541,19 +565,19 @@ namespace MarketDay.Shop
                 if (MatureContent && NPCUtility.IsChild(npc)) continue;
                 
                 // find what the NPC likes best
-                var best = GrangeChest.items
+                var best = GrangeChest.Items
                     .Where(gi => gi is not null && ItemPreferenceIndex(gi, npc) > 0)
                     .OrderByDescending(a => ItemPreferenceIndex(a, npc)).FirstOrDefault();
                 if (best is null)
                 {
                     // no stock 
-                    if (GrangeChest.items.Where(gi => gi is not null).ToList().Count > 0)
+                    if (GrangeChest.Items.Where(gi => gi is not null).ToList().Count > 0)
                     {
                         // debug: stock in chest
 
                         MarketDay.Log($"    {ShopName} has stock but {npc.Name} doesn't like any of it", LogLevel.Trace);
 
-                        var itemsInChest = GrangeChest.items
+                        var itemsInChest = GrangeChest.Items
                             .Where(gi => gi is not null)
                             .OrderByDescending(a => ItemPreferenceIndex(a, npc));
                         foreach (var stockItem in itemsInChest)
@@ -564,6 +588,9 @@ namespace MarketDay.Shop
                         }
 
                     }
+                    else {
+                        MarketDay.Log($"    {ShopName} has no stock", LogLevel.Trace);
+                    }
                     IncrementSharedValue(GrumpyVisitorsTodayKey);
                     npc.doEmote(12);
                     return;
@@ -571,8 +598,8 @@ namespace MarketDay.Shop
 
                 // buy it
                 SellToNPC(best, npc);
-                var i = GrangeChest.items.IndexOf(best);
-                GrangeChest.items[i] = null;
+                var i = GrangeChest.Items.IndexOf(best);
+                GrangeChest.Items[i] = null;
 
                 EmoteForPurchase(npc, best);
             }
@@ -609,7 +636,7 @@ namespace MarketDay.Shop
                     };
                 }
 
-                npc.showTextAboveHead(dialog, -1, 2, 1000);
+                npc.showTextAboveHead(dialog, default, 2, 1000);
                 npc.Sprite.UpdateSourceRect();
             }
         }
@@ -869,9 +896,9 @@ namespace MarketDay.Shop
             if (location is null) return new List<NPC>();
 
             var nearby = (from npc in location.characters
-                where npc.getTileX() >= Origin.X 
-                      && npc.getTileX() <= Origin.X + 3 
-                      && npc.getTileY() == (int)Origin.Y + 4
+                where npc.Tile.X >= Origin.X 
+                      && npc.Tile.X <= Origin.X + 3 
+                      && npc.Tile.Y == (int)Origin.Y + 4
                 select npc).ToList();
             return nearby;
         }
@@ -989,7 +1016,7 @@ namespace MarketDay.Shop
         {
             var freeTile = AvailableTileForFurniture(11778, DisplayChestHidingOffsetY);
             Log($"    Creating new DisplayChest at {freeTile}", LogLevel.Trace);
-            var chest = new Chest(true, freeTile, 232)
+            var chest = new Chest(true, freeTile, "232")
             {
                 modData =
                 {
@@ -1007,7 +1034,7 @@ namespace MarketDay.Shop
                 MarketDay.Log($"MakeDisplayChest: GrangeChest is null", LogLevel.Warn);
                 return;
             }
-            while (GrangeChest.items.Count < MarketDay.Progression.ShopSize) GrangeChest.items.Add(null);
+            while (GrangeChest.Items.Count < MarketDay.Progression.ShopSize) GrangeChest.Items.Add(null);
         }
 
         private void MakeStorageChest(GameLocation location, Vector2 OriginTile)
@@ -1018,7 +1045,7 @@ namespace MarketDay.Shop
                 : NpcName;
 
             Log($"    Creating new StorageChest at {VisibleChestPosition}", LogLevel.Trace);
-            var chest = new Chest(true, VisibleChestPosition, 232)
+            var chest = new Chest(true, VisibleChestPosition, "232")
             {
                 modData =
                 {
@@ -1061,15 +1088,15 @@ namespace MarketDay.Shop
             else
             {
                 var ci = Game1.random.Next(20);
-                var c = new DiscreteColorPicker(0, 0).getColorFromSelection(ci);
+                var c = DiscreteColorPicker.getColorFromSelection(ci);
                 Log($"    ShopColor randomized to {c}", LogLevel.Trace);
                 StockChest.playerChoiceColor.Value = c;
             }
 
             Log($"    SignObjectIndex {SignObjectIndex}", LogLevel.Trace);
-            var SignItem = GrangeChest.items.ToList().Find(item => item is not null);
-            if (SignItem is null && StockChest.items.Count > 0) SignItem = StockChest.items[0].getOne();
-            if (SignObjectIndex > 0) SignItem = new Object(SignObjectIndex, 1);
+            var SignItem = GrangeChest.Items.ToList().Find(item => item is not null);
+            if (SignItem is null && StockChest.Items.Count > 0) SignItem = StockChest.Items[0].getOne();
+            if (!string.IsNullOrEmpty(SignObjectIndex)) SignItem = new Object(SignObjectIndex, 1);
 
             if (SignItem is null) return;
             Log($"    {ShopSignKey}.displayItem.Value to {SignItem.DisplayName}", LogLevel.Trace);
@@ -1169,18 +1196,18 @@ namespace MarketDay.Shop
             var restockLimitRemaining =
                 IsPlayerShop ? MarketDay.Progression.AutoRestock : MarketDay.Config.RestockItemsPerHour;
 
-            for (var j = 0; j < GrangeChest.items.Count; j++)
+            for (var j = 0; j < GrangeChest.Items.Count; j++)
             {
-                if (StockChest.items.Count == 0)
+                if (StockChest.Items.Count == 0)
                 {
                     Log($"RestockGrangeFromChest: {ShopName} out of stock", LogLevel.Debug, true);
                     return;
                 }
 
                 if (!fullRestock && restockLimitRemaining <= 0) return;
-                if (GrangeChest.items[j] != null) continue;
+                if (GrangeChest.Items[j] != null) continue;
 
-                var stockItem = StockChest.items[Game1.random.Next(StockChest.items.Count)];
+                var stockItem = StockChest.Items[Game1.random.Next(StockChest.Items.Count)];
                 var grangeItem = stockItem.getOne();
 
                 grangeItem.Stack = 1;
@@ -1188,7 +1215,7 @@ namespace MarketDay.Shop
 
                 if (stockItem.Stack == 1)
                 {
-                    StockChest.items.Remove(stockItem);
+                    StockChest.Items.Remove(stockItem);
                 }
                 else
                 {
@@ -1211,11 +1238,11 @@ namespace MarketDay.Shop
                 MarketDay.Log("EmptyStoreIntoChest: GrangeChest is null", LogLevel.Error);
                 return;
             }
-            for (var j = 0; j < GrangeChest.items.Count; j++)
+            for (var j = 0; j < GrangeChest.Items.Count; j++)
             {
-                if (GrangeChest.items[j] == null) continue;
-                StockChest.addItem(GrangeChest.items[j]);
-                GrangeChest.items[j] = null;
+                if (GrangeChest.Items[j] == null) continue;
+                StockChest.addItem(GrangeChest.Items[j]);
+                GrangeChest.Items[j] = null;
             }
         }
 
@@ -1296,13 +1323,13 @@ namespace MarketDay.Shop
                 return;
             }
 
-            while (GrangeChest.items.Count < MarketDay.Progression.ShopSize) GrangeChest.items.Add(null);
+            while (GrangeChest.Items.Count < MarketDay.Progression.ShopSize) GrangeChest.Items.Add(null);
 
             if (position < 0) return;
-            if (position >= GrangeChest.items.Count) return;
-            if (GrangeChest.items[position] != null && !force) return;
+            if (position >= GrangeChest.Items.Count) return;
+            if (GrangeChest.Items[position] != null && !force) return;
 
-            GrangeChest.items[position] = i;
+            GrangeChest.Items[position] = i;
         }
 
         internal void DrawSign(Vector2 tileLocation, SpriteBatch spriteBatch, float layerDepth)
@@ -1448,9 +1475,9 @@ namespace MarketDay.Shop
             var xCutoff = (int) start.X + 168;
             start.Y += 8f;
 
-            for (var j = 0; j < GrangeChest.items.Count; j++)
+            for (var j = 0; j < GrangeChest.Items.Count; j++)
             {
-                if (GrangeChest.items[j] != null)
+                if (GrangeChest.Items[j] != null)
                 {
                     start.Y += 42f;
                     start.X += 4f;
@@ -1459,7 +1486,7 @@ namespace MarketDay.Shop
                         Vector2.Zero, 4f, SpriteEffects.None, layerDepth + 0.02f);
                     start.Y -= 42f;
                     start.X -= 4f;
-                    GrangeChest.items[j].drawInMenu(spriteBatch, start, 1f, 1f,
+                    GrangeChest.Items[j].drawInMenu(spriteBatch, start, 1f, 1f,
                         layerDepth + 0.0201f + j / 10000f, StackDrawType.Hide);
                 }
 
@@ -1479,7 +1506,7 @@ namespace MarketDay.Shop
             var pointsEarned = 14;
             Dictionary<int, bool> categoriesRepresented = new();
             int nullsCount = 0;
-            foreach (Item i in GrangeChest.items)
+            foreach (Item i in GrangeChest.Items)
             {
                 switch (i)
                 {

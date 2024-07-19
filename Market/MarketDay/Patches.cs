@@ -102,7 +102,7 @@ namespace MarketDay
     [HarmonyPatch("performToolAction")]
     public class Prefix_Object_performToolAction
     {
-        public static bool Prefix(Object __instance, GameLocation location, ref bool __result)
+        public static bool Prefix(Object __instance, ref bool __result)
         {
             var owner = MapUtility.Owner(__instance);
             MarketDay.Log(
@@ -115,7 +115,7 @@ namespace MarketDay
             MarketDay.Log(
                 $"Prefix_Object_performToolAction preventing damage to object at {__instance.TileLocation} owned by {owner}",
                 LogLevel.Debug, true);
-            location.playSound("clank");
+            // location.playSound("clank");
             __instance.shakeTimer = 100;
             __result = false;
             return false;
@@ -153,7 +153,7 @@ namespace MarketDay
         }
     }
 
-    [HarmonyPatch(typeof(PathFindController))]
+    [HarmonyPatch(typeof(StardewValley.Pathfinding.PathFindController))]
     [HarmonyPatch("findPathForNPCSchedules")]
     //  alter paths through Town to travel via market shops 
     public class Postfix_findPathForNPCSchedules
@@ -182,9 +182,9 @@ namespace MarketDay
         public static void Postfix(
             NPC __instance, 
             String rawData,
-            ref Dictionary<int, SchedulePathDescription> __result)
+            ref Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> __result)
         {
-            if (!__instance.isVillager() && __instance is not Child) return;
+            if (!__instance.IsVillager && __instance is not Child) return;
             if (!MarketDay.Config.NPCVisitorRescheduling) return;
             if (!MarketDay.IsMarketDay) return;
             
@@ -194,27 +194,27 @@ namespace MarketDay
         }
     }
     
-    [HarmonyPatch(typeof(NPC))]
-    [HarmonyPatch("getSchedule")]
-    //  public Dictionary<int, SchedulePathDescription> getSchedule(int dayOfMonth)
-    //  if NPC has no schedule for today, and they have a shop to stand next to,
-    //  schedule them to stand there all day
-    public class Postfix_getSchedule
-    {
-        public static void Postfix(
-            NPC __instance, 
-            int dayOfMonth,
-            ref Dictionary<int, SchedulePathDescription> __result)
-        {
-            if (!__instance.isVillager() && __instance is not Child) return;
-            if (!MarketDay.Config.NPCOwnerRescheduling) return;
-            if (!MarketDay.IsMarketDay) return;
+    // [HarmonyPatch(typeof(NPC))]
+    // [HarmonyPatch("getSchedule")]
+    // //  public Dictionary<int, SchedulePathDescription> getSchedule(int dayOfMonth)
+    // //  if NPC has no schedule for today, and they have a shop to stand next to,
+    // //  schedule them to stand there all day
+    // public class Postfix_getSchedule
+    // {
+    //     public static void Postfix(
+    //         NPC __instance, 
+    //         int dayOfMonth,
+    //         ref Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> __result)
+    //     {
+    //         if (!__instance.IsVillager && __instance is not Child) return;
+    //         if (!MarketDay.Config.NPCOwnerRescheduling) return;
+    //         if (!MarketDay.IsMarketDay) return;
 
-            if (__result is not null && __result.Count > 0) return;
+    //         if (__result is not null && __result.Count > 0) return;
             
-            __result = Schedule.getScheduleWhenNoDefault(__instance, dayOfMonth);
-        }
-    }
+    //         __result = Schedule.getScheduleWhenNoDefault(__instance, dayOfMonth);
+    //     }
+    // }
     
     [HarmonyPatch(typeof(NPC))]
     [HarmonyPatch("getMasterScheduleEntry")]
@@ -231,7 +231,7 @@ namespace MarketDay
             ref string __result)
         {
             if (!MarketDay.Config.NPCScheduleReplacement) return;
-            if (!__instance.isVillager() && __instance is not Child) return;
+            if (!__instance.IsVillager && __instance is not Child) return;
             if (!MarketDay.IsMarketDay) return;
             if (Schedule.TownieVisitorsToday is null) return;
             if (Schedule.TownieVisitorsToday.Count > MarketDay.Progression.NumberOfTownieVisitors) return;
@@ -239,7 +239,8 @@ namespace MarketDay
             if (MapUtility.ShopTiles.Count == 0) return;
             if (StardewValley.Utility.GetAllPlayerFriendshipLevel(__instance) <= 0) return;
             
-            var alreadyVisitingIsland = Game1.netWorldState.Value.IslandVisitors.ContainsKey(__instance.Name);
+            // var alreadyVisitingIsland = Game1.netWorldState.Value.IslandVisitors.ContainsKey(__instance.Name);
+            var alreadyVisitingIsland = Game1.netWorldState.Value.IslandVisitors.Contains(__instance.Name);
             var couldVisitIslandButNot = IslandSouth.CanVisitIslandToday(__instance) && !alreadyVisitingIsland;
 
             var genericSchedule = "spring,summer,fall,winter,default".Split(",").Contains(schedule_key);
@@ -305,9 +306,7 @@ namespace MarketDay
             
             __instance.showTextAboveHead(call);
             if (c is not NPC npc) return;
-            if (Game1.random.NextDouble() >= 0.66)
-                npc.showTextAboveHead(null);
-            else
+            if (Game1.random.NextDouble() < 0.66)
                 npc.showTextAboveHead(response, preTimer: 1000 + Game1.random.Next(500));
         }
     }

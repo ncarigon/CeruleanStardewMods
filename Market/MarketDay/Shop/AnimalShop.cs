@@ -33,7 +33,7 @@ namespace MarketDay.Shop
         private void UpdateShopAnimalStock()
         {
             //BFAV patches this anyways so it'll automatically work if installed
-            _allAnimalsStock = StardewValley.Utility.getPurchaseAnimalStock();
+            _allAnimalsStock = StardewValley.Utility.getPurchaseAnimalStock(Game1.currentLocation);
 
             _shopAnimalStock = new List<Object>();
             foreach (var animal in _allAnimalsStock)

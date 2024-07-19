@@ -26,28 +26,28 @@ namespace MarketDay.Utility
             GameLocation location,
             int limit)
         {
-            PriorityQueue priorityQueue = new PriorityQueue();
+            StardewValley.Pathfinding.PriorityQueue priorityQueue = new StardewValley.Pathfinding.PriorityQueue();
             HashSet<int> intSet = new HashSet<int>();
             int num = 0;
-            priorityQueue.Enqueue(new PathNode(startPoint.X, startPoint.Y, 0, null),
+            priorityQueue.Enqueue(new StardewValley.Pathfinding.PathNode(startPoint.X, startPoint.Y, 0, null),
                 Math.Abs(endPoint.X - startPoint.X) + Math.Abs(endPoint.Y - startPoint.Y));
-            PathNode pathNode1 = (PathNode) priorityQueue.Peek();
+            StardewValley.Pathfinding.PathNode pathNode1 = (StardewValley.Pathfinding.PathNode) priorityQueue.Peek();
             int layerWidth = location.map.Layers[0].LayerWidth;
             int layerHeight = location.map.Layers[0].LayerHeight;
             while (!priorityQueue.IsEmpty())
             {
-                PathNode pathNode2 = priorityQueue.Dequeue();
+                StardewValley.Pathfinding.PathNode pathNode2 = priorityQueue.Dequeue();
                 if (pathNode2.x == endPoint.X && pathNode2.y == endPoint.Y)
-                    return PathFindController.reconstructPath(pathNode2);
+                    return StardewValley.Pathfinding.PathFindController.reconstructPath(pathNode2);
                 intSet.Add(pathNode2.id);
                 for (int index = 0; index < 4; ++index)
                 {
                     int x = pathNode2.x + Directions[index, 0];
                     int y = pathNode2.y + Directions[index, 1];
-                    int hash = PathNode.ComputeHash(x, y);
+                    int hash = StardewValley.Pathfinding.PathNode.ComputeHash(x, y);
                     if (!intSet.Contains(hash))
                     {
-                        PathNode p = new PathNode(x, y, pathNode2);
+                        StardewValley.Pathfinding.PathNode p = new StardewValley.Pathfinding.PathNode(x, y, pathNode2);
                         p.g = (byte) (pathNode2.g + 1U);
                         if (p.x == endPoint.X && p.y == endPoint.Y || p.x >= 0 && p.y >= 0 &&
                             (p.x < layerWidth && p.y < layerHeight) &&
@@ -126,17 +126,18 @@ namespace MarketDay.Utility
             return 0;
         }
 
-        public static Dictionary<int, SchedulePathDescription> parseMasterSchedule(NPC npc, string rawData)
+        public static Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> parseMasterSchedule(NPC npc, string rawData)
         {
             var defaultPosition = MarketDay.helper.Reflection.GetField<NetVector2>(npc, "defaultPosition");
             var previousEndPoint = MarketDay.helper.Reflection.GetField<Point>(npc, "previousEndPoint");
-            var _lastLoadedScheduleKey = MarketDay.helper.Reflection.GetField<string>(npc, "_lastLoadedScheduleKey");
+            // var _lastLoadedScheduleKey = MarketDay.helper.Reflection.GetField<string>(npc, "_lastLoadedScheduleKey");
             var getLocationRoute = MarketDay.helper.Reflection.GetMethod(npc, "getLocationRoute");
+            var _lastLoadedScheduleKey = npc.ScheduleKey;
 
             MarketDay.Log($"parseMasterSchedule {npc.Name}: {rawData}", LogLevel.Trace, true);
 
             string[] scriptParts = rawData.Split('/');
-            Dictionary<int, SchedulePathDescription> masterSchedule = new Dictionary<int, SchedulePathDescription>();
+            Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> masterSchedule = new Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription>();
             int num = 0;
             if (scriptParts[0].Contains("GOTO"))
             {
@@ -152,7 +153,7 @@ namespace MarketDay.Utility
                 }
                 catch (Exception)
                 {
-                    return npc.parseMasterSchedule(npc.getMasterScheduleEntry("spring"));
+                    return parseMasterSchedule(npc, npc.getMasterScheduleEntry("spring"));
                 }
             }
 
@@ -187,7 +188,7 @@ namespace MarketDay.Utility
 
                     if (flag)
                     {
-                        return npc.parseMasterSchedule(npc.getMasterScheduleEntry("spring"));
+                        return parseMasterSchedule(npc, npc.getMasterScheduleEntry("spring"));
                     }
 
                     num++;
@@ -215,7 +216,7 @@ namespace MarketDay.Utility
                     return null;
                 }
 
-                return npc.parseMasterSchedule(npc.getMasterScheduleEntry(text3));
+                return parseMasterSchedule(npc, npc.getMasterScheduleEntry("spring"));
             }
 
             Point startPoint = npc.isMarried()
@@ -380,10 +381,10 @@ namespace MarketDay.Utility
                 {
                     if (npc.getMasterScheduleRawData().ContainsKey("default"))
                     {
-                        return npc.parseMasterSchedule(npc.getMasterScheduleEntry("default"));
+                        return parseMasterSchedule(npc, npc.getMasterScheduleEntry("default"));
                     }
 
-                    return npc.parseMasterSchedule(npc.getMasterScheduleEntry("spring"));
+                    return parseMasterSchedule(npc, npc.getMasterScheduleEntry("spring"));
                 }
 
                 if (num4 < scriptWords.Length)
@@ -462,9 +463,9 @@ namespace MarketDay.Utility
                 Game1.warpCharacter(npc, text5, new Point(num2, num3));
             }
 
-            if (_lastLoadedScheduleKey.GetValue() != null && Game1.IsMasterGame)
+            if (_lastLoadedScheduleKey != null && Game1.IsMasterGame)
             {
-                npc.dayScheduleName.Value = _lastLoadedScheduleKey.GetValue();
+                npc.dayScheduleName.Value = _lastLoadedScheduleKey;
             }
 
             return masterSchedule;
@@ -473,7 +474,7 @@ namespace MarketDay.Utility
         private static GrangeShop RouteViaOwnedShop(NPC npc, string startLoc, string endLocationName,
             IReflectedMethod getLocationRoute, int time, int nextStepTime, int minutesAvailable, Point startPoint,
             string endBehavior, string endMessage, int endingX, int endingY, int faceDirection,
-            IDictionary<int, SchedulePathDescription> masterSchedule,
+            IDictionary<int, StardewValley.Pathfinding.SchedulePathDescription> masterSchedule,
             ref int stepTime)
         {
             if (startLoc is null || endLocationName is null) return null;
@@ -481,7 +482,8 @@ namespace MarketDay.Utility
             // sorry, Krobus is not permitted in town
             if (npc.Name == "Krobus") return null;
 
-            var viaLocations = getLocationRoute.Invoke<List<string>>(startLoc, endLocationName);
+            // var viaLocations = getLocationRoute.Invoke<List<string>>(startLoc, endLocationName);
+            var viaLocations = MarketDay.helper.Reflection.GetMethod(npc, "getLocationRoute").Invoke<string[]>(startLoc, endLocationName);
             if (viaLocations is null || !viaLocations.Contains("Town")) return null;
 
             // see if they own a shop or their spouse owns a shop
@@ -495,8 +497,7 @@ namespace MarketDay.Utility
                 startPoint.X, startPoint.Y, "Town", (int) shop.OwnerTile.X, (int) shop.OwnerTile.Y, 2, null,
                 null);
             var arriveInTownAt =
-                StardewValley.Utility.ConvertMinutesToTime(StardewValley.Utility.ConvertTimeToMinutes(stepTime) +
-                                                           Minutes(startToTown));
+                StardewValley.Utility.ConvertMinutesToTime(StardewValley.Utility.ConvertTimeToMinutes(stepTime) + Minutes(startToTown));
             var townToEnd = PathfindToNextScheduleLocation(npc, arriveInTownAt, nextStepTime, true, "Town",
                 (int) shop.OwnerTile.X, (int) shop.OwnerTile.Y, endLocationName, endingX, endingY, faceDirection,
                 endBehavior, endMessage);
@@ -626,7 +627,7 @@ namespace MarketDay.Utility
             return minutes;
         }
 
-        private static int Minutes(SchedulePathDescription schedulePathDescription)
+        private static int Minutes(StardewValley.Pathfinding.SchedulePathDescription schedulePathDescription)
         {
             return Minutes(schedulePathDescription.route);
         }
@@ -675,7 +676,7 @@ namespace MarketDay.Utility
             return true;
         }    
         
-        private static SchedulePathDescription PathfindToNextScheduleLocation(NPC npc, int stepTime, int nextStepTime,
+        private static StardewValley.Pathfinding.SchedulePathDescription PathfindToNextScheduleLocation(NPC npc, int stepTime, int nextStepTime,
             bool visitShops, string startingLocation, int startingX, int startingY, string endingLocation, int endingX,
             int endingY, int finalFacingDirection, string endBehavior, string endMessage)
         {
@@ -691,11 +692,11 @@ namespace MarketDay.Utility
             var addToStackForSchedule = MarketDay.helper.Reflection.GetMethod(npc, "addToStackForSchedule");
 
             var routeViaLocations = !startingLocation.Equals(endingLocation, StringComparison.Ordinal)
-                ? getLocationRoute.Invoke<List<string>>(startingLocation, endingLocation)
+                ? getLocationRoute.Invoke<string[]>(startingLocation, endingLocation)
                 : null;
             if (routeViaLocations != null)
             {
-                for (var i = 0; i < routeViaLocations.Count; i++)
+                for (var i = 0; i < routeViaLocations.Length; i++)
                 {
                     var locationFromName = Game1.getLocationFromName(routeViaLocations[i]);
                     if (locationFromName.Name.Equals("Trailer") &&
@@ -710,7 +711,7 @@ namespace MarketDay.Utility
                                  && nextStepTime > MarketDay.Config.OpeningTime * 100
                                  && WithinTownieQuota(npc);
 
-                    if (i < routeViaLocations.Count - 1)
+                    if (i < routeViaLocations.Length - 1)
                     {
                         var warpPointTo = locationFromName.getWarpPointTo(routeViaLocations[i + 1]);
                         if (warpPointTo.Equals(Point.Zero) || startPoint.Equals(Point.Zero))
@@ -733,7 +734,7 @@ namespace MarketDay.Utility
                     else
                     {
                         stack = addToStackForSchedule.Invoke<Stack<Point>>(stack,
-                            PathFindController.findPathForNPCSchedules(startPoint, new Point(endingX, endingY),
+                            StardewValley.Pathfinding.PathFindController.findPathForNPCSchedules(startPoint, new Point(endingX, endingY),
                                 locationFromName, 30000));
                     }
                 }
@@ -767,7 +768,7 @@ namespace MarketDay.Utility
                 }
             }
 
-            return new SchedulePathDescription(stack, finalFacingDirection, endBehavior, endMessage);
+            return new StardewValley.Pathfinding.SchedulePathDescription(stack, finalFacingDirection, endBehavior, endMessage, endingLocation, new Point(endingX, endingY));
         }
 
         private static List<string> GetLocationRoute(NPC npc, string startingLocation, string endingLocation)
@@ -906,7 +907,7 @@ namespace MarketDay.Utility
         /// <param name="npc"></param>
         /// <param name="dayOfMonth"></param>
         /// <returns></returns>
-        public static Dictionary<int, SchedulePathDescription> getScheduleWhenNoDefault(NPC npc, int dayOfMonth)
+        public static Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> getScheduleWhenNoDefault(NPC npc, int dayOfMonth)
         {
             string there;
             string back;
@@ -922,9 +923,9 @@ namespace MarketDay.Utility
 
             // are they married to a player?
             var spouseName = SpouseName(npc);
-            if (spouseName is null) return new Dictionary<int, SchedulePathDescription>();
+            if (spouseName is null) return new Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription>();
             if (!MapUtility.PlayerShopOwners.TryGetValue(spouseName, out var spouseShop))
-                return new Dictionary<int, SchedulePathDescription>();
+                return new Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription>();
             // MarketDay.Log($"getScheduleWhenNoDefault: {npc.Name} married to owner of shop {spouseShop.ShopName}", LogLevel.Trace);
             there = $"a{MarketDay.Config.OpeningTime * 100} Town {spouseShop.OwnerTile.X} {spouseShop.OwnerTile.Y} 2";
             back = $"{MarketDay.Config.ClosingTime * 100} BusStop -1 23 3";
@@ -1059,7 +1060,7 @@ namespace MarketDay.Utility
 
         public static bool CanVisitIslandToday(NPC npc)
         {
-            if (!npc.isVillager() || !npc.CanSocialize || npc.daysUntilNotInvisible > 0 || npc.IsInvisible ||
+            if (!npc.IsVillager || !npc.CanSocialize || npc.daysUntilNotInvisible > 0 || npc.IsInvisible ||
                 npc.Name is "Pam" or "Emily" && Game1.dayOfMonth == 15 && Game1.currentSeason == "fall")
                 return false;
             var str = Game1.shortDayNameFromDayOfSeason(Game1.dayOfMonth);

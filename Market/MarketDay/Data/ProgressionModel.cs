@@ -133,13 +133,13 @@ namespace MarketDay.Data
                     var name = prizeLevel.Object;
 
                     var item = ItemsUtil.GetIndexByName(name);
-                    if (item == -1) MarketDay.Log($"    Could not get index for object: {name}", LogLevel.Warn);
+                    if (item == "-1") MarketDay.Log($"    Could not get index for object: {name}", LogLevel.Warn);
                     
                     if (name is "Wine" or "Jelly" or "Juice" or "Pickle" or "Roe" or "Aged Roe")
                     {
                         var preservedGoods = prizeLevel.Flavor;
                         var item1 = ItemsUtil.GetIndexByName(preservedGoods);
-                        if (item1 == -1) MarketDay.Log($"    Could not get index for flavor: {preservedGoods}", LogLevel.Warn);
+                        if (item1 == "-1") MarketDay.Log($"    Could not get index for flavor: {preservedGoods}", LogLevel.Warn);
                     }
                 }
             }

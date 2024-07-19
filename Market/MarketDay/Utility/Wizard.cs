@@ -23,7 +23,7 @@ namespace MarketDay.Utility
             if (!Context.IsMainPlayer) return;
 
             // see if event has run
-            if (! Game1.player.eventsSeen.Contains(117780001))
+            if (! Game1.player.eventsSeen.Contains("117780001"))
             {
                 Game1.getFarm().modData.Remove($"{MarketDay.SMod.ModManifest.UniqueID}/ConfigurationWizardDone");
                 return;
@@ -39,29 +39,29 @@ namespace MarketDay.Utility
             
             // collect answers from event
             Challenge p = Challenge.NotAnswered;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789010)) p = Challenge.Yes;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789011)) p = Challenge.No;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789012)) p = Challenge.Rude;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789010")) p = Challenge.Yes;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789011")) p = Challenge.No;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789012")) p = Challenge.Rude;
 
             Shops s = Shops.NotAnswered;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789020)) s = Shops.S3;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789021)) s = Shops.S6;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789022)) s = Shops.S9;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789023)) s = Shops.S12;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789024)) s = Shops.S15;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789020")) s = Shops.S3;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789021")) s = Shops.S6;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789022")) s = Shops.S9;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789023")) s = Shops.S12;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789024")) s = Shops.S15;
             
             Day d = Day.NotAnswered;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789030)) d = Day.Friday;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789031)) d = Day.Saturday;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789032)) d = Day.Sunday;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789030")) d = Day.Friday;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789031")) d = Day.Saturday;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789032")) d = Day.Sunday;
 
             Weather w = Weather.NotAnswered;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789040)) w = Weather.Fine;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789041)) w = Weather.Any;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789040")) w = Weather.Fine;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789041")) w = Weather.Any;
 
             ShowGMCM g = ShowGMCM.NotAnswered;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789050)) g = ShowGMCM.Yes;
-            if (Game1.player.dialogueQuestionsAnswered.Contains(117789051)) g = ShowGMCM.No;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789050")) g = ShowGMCM.Yes;
+            if (Game1.player.dialogueQuestionsAnswered.Contains("117789051")) g = ShowGMCM.No;
 
             // set config accordingly
             if (p is Challenge.Rude or Challenge.NotAnswered) { return; }

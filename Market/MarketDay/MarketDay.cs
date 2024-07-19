@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Graphics;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
+using StardewValley.Characters;
 using StardewValley.Menus;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
@@ -206,7 +207,7 @@ namespace MarketDay
                     $"Time  {Game1.currentSeason} {Game1.dayOfMonth} {Game1.timeOfDay} {Game1.ticks}",
                     $"Day  {dayOfWeek} {week} {season}"
                 };
-                var festival = StardewValley.Utility.isFestivalDay(Game1.dayOfMonth, Game1.currentSeason);
+                var festival = StardewValley.Utility.isFestivalDay(Game1.dayOfMonth, Game1.season);
                 state.Add($"Weather  Rain: {Game1.isRaining}  Snow: {Game1.isSnowing}  Festival: {festival}");
                 state.Add($"Market Day: {IsMarketDay}");
                 state.Add($"GMM Compat  Enabled: {Config.GMMCompat}  GMM Day: {isGMMDay()}  Joseph: {GMMJosephPresent}  Paisley: {GMMPaisleyPresent}");
@@ -716,13 +717,15 @@ namespace MarketDay
             Schedule.NPCInteractions = new();
             Schedule.TownieVisitorsToday = new HashSet<NPC>();
 
-            var npcs = new List<NPC>();
-            StardewValley.Utility.getAllCharacters(npcs);
+            // var npcs = new List<NPC>();
+            // StardewValley.Utility.getAllCharacters(npcs);
+            List<NPC> npcs = StardewValley.Utility.getAllCharacters();
             StardewValley.Utility.Shuffle(Game1.random, npcs);
-            foreach (var npc in npcs.Where(npc => npc is not null).Where(npc => npc.isVillager()))
+            foreach (var npc in npcs.Where(npc => npc is not null).Where(npc => npc.IsVillager).Where(npc => npc is not Child))
             {
                 Log($"RecalculateSchedules:     {npc.Name}", LogLevel.Trace);
-                npc.Schedule = npc.getSchedule(Game1.dayOfMonth);
+                // npc.Schedule = npc.getSchedule(Game1.dayOfMonth);
+                npc.TryLoadSchedule();
             }
             
             Log($"RecalculateSchedules: completed at {Game1.currentSeason} {Game1.dayOfMonth} {Game1.timeOfDay} {Game1.ticks}", LogLevel.Trace);
@@ -1044,8 +1047,7 @@ namespace MarketDay
         }
 
         private static void OnSaveLoaded_STFInit(object sender, SaveLoadedEventArgs e)
-        {
-            
+        {            
             // some hooks for STF
             ShopManager.LoadContentPacks();
             
@@ -1064,7 +1066,14 @@ namespace MarketDay
         {
             if (Game1.activeClickableMenu is ShopMenu shop)
             {
-                shop.setItemPriceAndStock(ItemsUtil.RemoveSpecifiedJAPacks(shop.itemPriceAndStock));
+                var itemsPriceAndStock = shop.itemPriceAndStock;
+                List<ISalable> removeItems = (itemsPriceAndStock.Keys.Where(item => ItemsUtil.ItemsToRemove.Contains(item.Name))).ToList();
+
+                foreach (var item in removeItems)
+                {
+                    itemsPriceAndStock.Remove(item);
+                }
+                shop.setItemPriceAndStock(itemsPriceAndStock);
             }
         }
 
@@ -1422,7 +1431,7 @@ namespace MarketDay
                 var week = Game1.dayOfMonth / 7;
                 var season = Game1.currentSeason;
                 
-                var md = !StardewValley.Utility.isFestivalDay(Game1.dayOfMonth, Game1.currentSeason);
+                var md = !StardewValley.Utility.isFestivalDay(Game1.dayOfMonth, Game1.season);
                 md = md && (Config.OpenInRain || !Game1.isRaining);
                 md = md && (Config.OpenInSnow || !Game1.isSnowing);
 

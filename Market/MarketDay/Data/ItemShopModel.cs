@@ -22,7 +22,7 @@ namespace MarketDay.Data
         public string ClosedMessage { get; set; } = null;
         public Dictionary<string, string> LocalizedQuote { get; set; }
         public Dictionary<string, string> LocalizedClosedMessage { get; set; }
-        public int SignObjectIndex { get; set; }
+        public string SignObjectIndex { get; set; }
         public Color ShopColor { get; set; }
         
         public string NpcName { get; set; }
