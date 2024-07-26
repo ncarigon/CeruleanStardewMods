@@ -1,7 +1,7 @@
 {
   "Name": "[CP] Market Day",
   "Author": "LiSoNaZa",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "Description": "Market Day: Sell Your Items - unofficial 1.6 update",
   "UniqueID": "lisonaza.MarketDay.CP",
   "UpdateKeys": [
@@ -17,7 +17,7 @@
     },
     {
       "UniqueID": "lisonaza.MarketDay",
-      "MinimumVersion": "1.0.0",
+      "MinimumVersion": "1.0.1",
       "IsRequired": true
     }
   ]

@@ -16,8 +16,8 @@ namespace MarketDay.API
         List<string> GetAllWeaponsFromContentPack(string cp);
         List<string> GetAllClothingFromContentPack(string cp);
 
-        int GetCropId(string name);
-        int GetFruitTreeId(string name);
+        // int GetCropId(string name);
+        // int GetFruitTreeId(string name);
 
         event EventHandler AddedItemsToShop;
     }

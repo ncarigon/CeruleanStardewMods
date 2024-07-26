@@ -139,23 +139,23 @@ namespace MarketDay.Utility
             switch (itemType)
             {
                 case "Object":
-                    foreach (var (index, objectData) in ObjectInfoSourceObject){ if (objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourceObject){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
                 case "BigCraftable":
-                    foreach (var (index, objectData) in ObjectInfoSourceBigCraftable){ if (objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourceBigCraftable){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
                 case "Shirt":
-                    foreach (var (index, objectData) in ObjectInfoSourceShirt){ if (objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourceShirt){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
                 case "Pants":
-                    foreach (var (index, objectData) in ObjectInfoSourcePants){ if (objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourcePants){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
                 case "Ring":
-                    foreach (var (index, objectData) in ObjectInfoSourceRing){ if (objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourceRing){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
                 case "Hat":
-                    foreach (var (index, objectData) in ObjectInfoSourceHat){ if (objectData.Split('/')[0] == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourceHat){ if (objectData != null && objectData.Split('/')[0] == name) { return index; } } return "-1";
                 case "Boot":
-                    foreach (var (index, objectData) in ObjectInfoSourceBoot){ if (objectData.Split('/')[0] == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourceBoot){ if (objectData != null && objectData.Split('/')[0] == name) { return index; } } return "-1";
                 case "Furniture":
-                    foreach (var (index, objectData) in ObjectInfoSourceFurniture){ if (objectData.Split('/')[0] == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourceFurniture){ if (objectData != null && objectData.Split('/')[0] == name) { return index; } } return "-1";
                 case "Weapon":
-                    foreach (var (index, objectData) in ObjectInfoSourceWeapon){ if (objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in ObjectInfoSourceWeapon){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
             }
 
             return "-1";
@@ -282,7 +282,7 @@ namespace MarketDay.Utility
         /// <returns>True if it's a valid type, false if not</returns>
         public static bool CheckItemType(string itemType)
         {
-            string searchString = "Object|BigCraftable|Shirt|Pants|Ring|Hat|Furniture|Weapon";
+            string searchString = "Object|BigCraftable|Shirt|Pants|Ring|Hat|Boot|Furniture|Weapon";
 
             return itemType == "Seed" || searchString.Contains(itemType);
         }
@@ -292,38 +292,38 @@ namespace MarketDay.Utility
         /// </summary>
         /// <param name="cropName">The name of the crop object</param>
         /// <returns>The ID of the seed object if found, -1 if not</returns>
-        public static string GetSeedId(string cropName)
-        {
-            //int cropID = MarketDay.JsonAssets.GetCropId(cropName);
-            int cropId = APIs.JsonAssets.GetCropId(cropName);
-            foreach (KeyValuePair<string, StardewValley.GameData.Crops.CropData> kvp in _cropData)
-            {
-                //find the tree id in crops information to get seed id
-                Int32.TryParse(kvp.Value.ToString(), out int id);
-                if (cropId == id)
-                    return kvp.Key;
-            }
+        // public static string GetSeedId(string cropName)
+        // {
+        //     //int cropID = MarketDay.JsonAssets.GetCropId(cropName);
+        //     int cropId = APIs.JsonAssets.GetCropId(cropName);
+        //     foreach (KeyValuePair<string, StardewValley.GameData.Crops.CropData> kvp in _cropData)
+        //     {
+        //         //find the tree id in crops information to get seed id
+        //         Int32.TryParse(kvp.Value.ToString(), out int id);
+        //         if (cropId == id)
+        //             return kvp.Key;
+        //     }
 
-            return "-1";
-        }
+        //     return "-1";
+        // }
 
         /// <summary>
         /// Given the name of a tree crop, return the ID of its sapling object
         /// </summary>
         /// <returns>The ID of the sapling object if found, -1 if not</returns>
-        public static string GetSaplingId(string treeName)
-        {
-            string treeId = APIs.JsonAssets.GetFruitTreeId(treeName).ToString();
-            foreach (KeyValuePair<string, StardewValley.GameData.FruitTrees.FruitTreeData> kvp in _fruitTreeData)
-            {
-                //find the tree id in fruitTrees information to get sapling id
-                Int32.TryParse(kvp.Value.DisplayName, out int id);
-                if (treeId == id.ToString())
-                    return kvp.Key.ToString();
-            }
+        // public static string GetSaplingId(string treeName)
+        // {
+        //     string treeId = APIs.JsonAssets.GetFruitTreeId(treeName).ToString();
+        //     foreach (KeyValuePair<string, StardewValley.GameData.FruitTrees.FruitTreeData> kvp in _fruitTreeData)
+        //     {
+        //         //find the tree id in fruitTrees information to get sapling id
+        //         Int32.TryParse(kvp.Value.DisplayName, out int id);
+        //         if (treeId == id.ToString())
+        //             return kvp.Key.ToString();
+        //     }
 
-            return "-1";
-        }
+        //     return "-1";
+        // }
 
         public static void RegisterItemsToRemove()
         {
@@ -350,24 +350,24 @@ namespace MarketDay.Utility
                     ItemsToRemove.AddRange(items);
                 }
 
-                var crops = APIs.JsonAssets.GetAllCropsFromContentPack(pack);
+                // var crops = APIs.JsonAssets.GetAllCropsFromContentPack(pack);
 
-                if (crops != null)
-                {
-                    foreach (string seedId in crops.Select(GetSeedId))
-                    {
-                        ItemsToRemove.Add(ObjectInfoSourceObject[seedId].Name);
-                    }
-                }
+                // if (crops != null)
+                // {
+                //     foreach (string seedId in crops.Select(GetSeedId))
+                //     {
+                //         ItemsToRemove.Add(ObjectInfoSourceObject[seedId].Name);
+                //     }
+                // }
 
-                var trees = APIs.JsonAssets.GetAllFruitTreesFromContentPack(pack);
-                if (trees != null)
-                {
-                    foreach (string saplingID in trees.Select(GetSaplingId))
-                    {
-                        ItemsToRemove.Add(ObjectInfoSourceObject[saplingID].Name);
-                    }
-                }
+                // var trees = APIs.JsonAssets.GetAllFruitTreesFromContentPack(pack);
+                // if (trees != null)
+                // {
+                //     foreach (string saplingID in trees.Select(GetSaplingId))
+                //     {
+                //         ItemsToRemove.Add(ObjectInfoSourceObject[saplingID].Name);
+                //     }
+                // }
 
 
                 items = APIs.JsonAssets.GetAllWeaponsFromContentPack(pack);

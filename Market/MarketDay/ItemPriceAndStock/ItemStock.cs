@@ -160,33 +160,33 @@ namespace MarketDay.ItemPriceAndStock
 
                 if (ItemType == "Seed")
                 {
-                    var crops = APIs.JsonAssets.GetAllCropsFromContentPack(JAPack);
+                    // var crops = APIs.JsonAssets.GetAllCropsFromContentPack(JAPack);
                     var trees = APIs.JsonAssets.GetAllFruitTreesFromContentPack(JAPack);
 
 
-                    if (crops != null)
-                    {
+                    // if (crops != null)
+                    // {
 
-                        foreach (string crop in crops)
-                        {
-                            if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(crop)) continue;
-                            string id = ItemsUtil.GetSeedId(crop);
-                            if (id != "-1")
-                                _builder.AddSpecificItemToStock(id, priceMultiplier);
-                        }
-                    }
+                    //     foreach (string crop in crops)
+                    //     {
+                    //         if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(crop)) continue;
+                    //         string id = ItemsUtil.GetSeedId(crop);
+                    //         if (id != "-1")
+                    //             _builder.AddSpecificItemToStock(id, priceMultiplier);
+                    //     }
+                    // }
 
-                    if (trees != null)
-                    {
+                    // if (trees != null)
+                    // {
 
-                        foreach (string tree in trees)
-                        {
-                            if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(tree)) continue;
-                            string id = ItemsUtil.GetSaplingId(tree);
-                            if (id != "-1")
-                                _builder.AddSpecificItemToStock(id, priceMultiplier);
-                        }
-                    }
+                    //     foreach (string tree in trees)
+                    //     {
+                    //         if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(tree)) continue;
+                    //         string id = ItemsUtil.GetSaplingId(tree);
+                    //         if (id != "-1")
+                    //             _builder.AddSpecificItemToStock(id, priceMultiplier);
+                    //     }
+                    // }
 
                     continue; //skip the rest of the loop so we don't also add the none-seed version
                 }
