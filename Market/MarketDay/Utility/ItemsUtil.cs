@@ -13,76 +13,16 @@ namespace MarketDay.Utility
     /// </summary>
     public static class ItemsUtil
     {
-        // public static Dictionary<string, IDictionary<string, string>> ObjectInfoSource { get; set; }
-        public static Dictionary<string, StardewValley.GameData.Objects.ObjectData> ObjectInfoSourceObject { get; set; }
-        public static Dictionary<string, StardewValley.GameData.BigCraftables.BigCraftableData> ObjectInfoSourceBigCraftable { get; set; }
-        public static Dictionary<string, StardewValley.GameData.Shirts.ShirtData> ObjectInfoSourceShirt { get; set; }
-        public static Dictionary<string, StardewValley.GameData.Pants.PantsData> ObjectInfoSourcePants { get; set; }
-        public static Dictionary<string, StardewValley.GameData.Objects.ObjectData> ObjectInfoSourceRing { get; set; }
-        public static Dictionary<string, string> ObjectInfoSourceHat { get; set; }
-        public static Dictionary<string, string> ObjectInfoSourceBoot { get; set; }
-        public static Dictionary<string, string> ObjectInfoSourceFurniture { get; set; }
-        public static Dictionary<string, StardewValley.GameData.Weapons.WeaponData> ObjectInfoSourceWeapon { get; set; }
-
-        public static List<string> RecipesList;
-        private static Dictionary<string, StardewValley.GameData.FruitTrees.FruitTreeData> _fruitTreeData;
-        private static Dictionary<string, StardewValley.GameData.Crops.CropData> _cropData;
-
-        public static List<string> PacksToRemove = new List<string>();
-        public static List<string> RecipePacksToRemove = new List<string>();
-        public static List<string> ItemsToRemove = new List<string>();
-
-        /// <summary>
-        /// Loads up the onject information for all types, 
-        /// done at the start of each save loaded so that JA info is up to date
-        /// </summary>
-        public static void UpdateObjectInfoSource()
-        {
-            //load up all the object information into a static dictionary
-
-            ObjectInfoSourceObject = DataLoader.Objects(Game1.content);
-            ObjectInfoSourceBigCraftable = DataLoader.BigCraftables(Game1.content);
-            ObjectInfoSourceShirt = DataLoader.Shirts(Game1.content);
-            ObjectInfoSourcePants = DataLoader.Pants(Game1.content);
-            ObjectInfoSourceRing = DataLoader.Objects(Game1.content);
-            ObjectInfoSourceHat = DataLoader.Hats(Game1.content);
-            ObjectInfoSourceBoot = DataLoader.Boots(Game1.content);
-            ObjectInfoSourceFurniture = DataLoader.Furniture(Game1.content);
-            ObjectInfoSourceWeapon = DataLoader.Weapons(Game1.content);
-
-            // ObjectInfoSource = new Dictionary<string, IDictionary<string, string>>
-            // {
-            //     {"Object", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/Objects")},
-            //     {"BigCraftable", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/BigCraftables")},
-            //     {"Shirt", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/Shirts")},
-            //     {"Pants", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/Pants")},
-            //     {"Ring", MarketDay.helper.GameContent.Load<Dictionary<string, string>>("Strings/Objects")},
-            //     // {"Hat", MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Strings/hats")},
-            //     // {"Boot", MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Strings/Boots")},
-            //     {"Furniture", MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Strings/Furniture")},
-            //     {"Weapon", MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Strings/weapons")}
-            // };
-
-            //load up recipe information
-            RecipesList = MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Data/CraftingRecipes").Keys
-                .ToList();
-            RecipesList.AddRange(MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Data/CookingRecipes")
-                .Keys.ToList());
-
-            //add "recipe" to the end of every element
-            RecipesList = RecipesList.Select(s => s + " Recipe").ToList();
-
-            //load up tree and crop data
-            _fruitTreeData = MarketDay.helper.GameContent.Load<Dictionary<string, StardewValley.GameData.FruitTrees.FruitTreeData>>(@"Data/fruitTrees");
-            _cropData = MarketDay.helper.GameContent.Load<Dictionary<string, StardewValley.GameData.Crops.CropData>>(@"Data/Crops");
-        }
+        public static List<string> PacksToRemove { get; } = new List<string>();
+        public static List<string> RecipePacksToRemove { get; } = new List<string>();
+        public static List<string> ItemsToRemove { get; } = new List<string>();
 
         /// <summary>
         /// Given and ItemInventoryAndStock, and a maximum number, randomly reduce the stock until it hits that number
         /// </summary>
         /// <param name="inventory">the ItemPriceAndStock</param>
         /// <param name="maxNum">The maximum number of items we want for this stock</param>
-        public static void RandomizeStock(Dictionary<ISalable, int[]> inventory, int maxNum)
+        public static void RandomizeStock(Dictionary<ISalable, ItemStockInformation> inventory, int maxNum)
         {
             while (inventory.Count > maxNum)
             {
@@ -139,23 +79,23 @@ namespace MarketDay.Utility
             switch (itemType)
             {
                 case "Object":
-                    foreach (var (index, objectData) in ObjectInfoSourceObject){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.Objects(Game1.content)) { if (objectData?.Name?.Equals(name) == true) { return index; } } return "-1";
                 case "BigCraftable":
-                    foreach (var (index, objectData) in ObjectInfoSourceBigCraftable){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.BigCraftables(Game1.content)) { if (objectData?.Name?.Equals(name) == true) { return index; } } return "-1";
                 case "Shirt":
-                    foreach (var (index, objectData) in ObjectInfoSourceShirt){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.Shirts(Game1.content)) { if (objectData?.Name?.Equals(name) == true) { return index; } } return "-1";
                 case "Pants":
-                    foreach (var (index, objectData) in ObjectInfoSourcePants){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.Pants(Game1.content)) { if (objectData?.Name?.Equals(name) == true) { return index; } } return "-1";
                 case "Ring":
-                    foreach (var (index, objectData) in ObjectInfoSourceRing){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.Objects(Game1.content)) { if (objectData?.Name?.Equals(name) == true) { return index; } } return "-1";
                 case "Hat":
-                    foreach (var (index, objectData) in ObjectInfoSourceHat){ if (objectData != null && objectData.Split('/')[0] == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.Hats(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(0)?.Equals(name) == true) { return index; } } return "-1";
                 case "Boot":
-                    foreach (var (index, objectData) in ObjectInfoSourceBoot){ if (objectData != null && objectData.Split('/')[0] == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.Boots(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(0)?.Equals(name) == true) { return index; } } return "-1";
                 case "Furniture":
-                    foreach (var (index, objectData) in ObjectInfoSourceFurniture){ if (objectData != null && objectData.Split('/')[0] == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.Furniture(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(0)?.Equals(name) == true) { return index; } } return "-1";
                 case "Weapon":
-                    foreach (var (index, objectData) in ObjectInfoSourceWeapon){ if (objectData != null && objectData.Name == name) { return index; } } return "-1";
+                    foreach (var (index, objectData) in DataLoader.Weapons(Game1.content)) { if (objectData?.Name?.Equals(name) == true) { return index; } } return "-1";
             }
 
             return "-1";
@@ -192,43 +132,38 @@ namespace MarketDay.Utility
         public static string GetIndexByCategory(string needle, string itemType = "Object")
         {
             var candidates = new List<string>();
-            MarketDay.Log($"{itemType}/{needle}", LogLevel.Info);
+            //MarketDay.Log($"{itemType}/{needle}", LogLevel.Info);
             switch (itemType)
             {
                 case "Object":
-                    foreach (var (index, objectData) in ObjectInfoSourceObject){ if (objectData.Type.Contains(needle)){ candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Objects(Game1.content)) { if (objectData?.Type?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 // case "BigCraftable":
-                //     foreach (var (index, objectData) in ObjectInfoSourceBigCraftable){ if (objectData.Type.Contains(needle)){ candidates.Add(index); } }
+                //     foreach (var (index, objectData) in DataLoader.BigCraftables(Game1.content)) { if (objectData?.Type?.Contains(needle) == true) { candidates.Add(index); } }
                 //     break;
                 // case "Shirt":
-                //     foreach (var (index, objectData) in ObjectInfoSourceShirt){ if (objectData.Category.ToString().Contains(needle)){ candidates.Add(index); } }
+                //     foreach (var (index, objectData) in DataLoader.Shirts(Game1.content)) { if (objectData?.Type?.Contains(needle) == true) { candidates.Add(index); } }
                 //     break;
                 // case "Pants":
-                //     foreach (var (index, objectData) in ObjectInfoSourcePants){ if (objectData.Category.ToString().Contains(needle)){ candidates.Add(index); } }
+                //     foreach (var (index, objectData) in DataLoader.Pants(Game1.content)) { if (objectData?.Type?.Contains(needle) == true) { candidates.Add(index); } }
                 //     break;
                 case "Ring":
-                    foreach (var (index, objectData) in ObjectInfoSourceRing){ if (objectData.Type.Contains(needle)){ candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Objects(Game1.content)) { if (objectData?.Type?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Hat":
-                    foreach (var (index, objectData) in ObjectInfoSourceHat){ if (objectData.Split('/')[3].Contains(needle)){ candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Hats(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(3)?.Contains(needle) == true){ candidates.Add(index); } }
                     break;
                 case "Boot":
-                    foreach (var (index, objectData) in ObjectInfoSourceBoot){ if (objectData.Split('/')[3].Contains(needle)){ candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Boots(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(3)?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Furniture":
-                    foreach (var (index, objectData) in ObjectInfoSourceFurniture){ if (objectData.Split('/')[3].Contains(needle)){ candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Furniture(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(3)?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
-                // case "Weapon":
-                //     foreach (var (index, objectData) in ObjectInfoSourceWeapon){ if (objectData.Category.ToString().Contains(needle)){ candidates.Add(index); } }
-                //     break;
+                    // case "Weapon":
+                    //     foreach (var (index, objectData) in DataLoader.Weapons(Game1.content)) { if (objectData?.Type?.Contains(needle) == true) { candidates.Add(index); } }
+                    //     break;
             }
-
-            if (candidates.Count > 0) {
-                MarketDay.Log($"{candidates[0]}", LogLevel.Info);
-                return candidates[Game1.random.Next(candidates.Count)].ToString();
-            }
-            return "-1";
+            return candidates.Any() ? candidates[Game1.random.Next(candidates.Count)] : "-1";
         }
 
         /// <summary>
@@ -243,36 +178,34 @@ namespace MarketDay.Utility
             switch (itemType)
             {
                 case "Object":
-                    foreach (var (index, objectData) in ObjectInfoSourceObject){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Objects(Game1.content)) { if (objectData?.Name?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "BigCraftable":
-                    foreach (var (index, objectData) in ObjectInfoSourceBigCraftable){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.BigCraftables(Game1.content)) { if (objectData?.Name?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Shirt":
-                    foreach (var (index, objectData) in ObjectInfoSourceShirt){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Shirts(Game1.content)) { if (objectData?.Name?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Pants":
-                    foreach (var (index, objectData) in ObjectInfoSourcePants){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Pants(Game1.content)) { if (objectData?.Name?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Ring":
-                    foreach (var (index, objectData) in ObjectInfoSourceRing){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Objects(Game1.content)) { if (objectData?.Name?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Hat":
-                    foreach (var (index, objectData) in ObjectInfoSourceHat){ if (objectData.Split('/')[0].Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Hats(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(0)?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Boot":
-                    foreach (var (index, objectData) in ObjectInfoSourceBoot){ if (objectData.Split('/')[0].Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Boots(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(0)?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Furniture":
-                    foreach (var (index, objectData) in ObjectInfoSourceFurniture){ if (objectData.Split('/')[0].Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Furniture(Game1.content)) { if (objectData?.Split('/')?.ElementAtOrDefault(0)?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
                 case "Weapon":
-                    foreach (var (index, objectData) in ObjectInfoSourceWeapon){ if (objectData.Name.Contains(needle)) { candidates.Add(index); } }
+                    foreach (var (index, objectData) in DataLoader.Weapons(Game1.content)) { if (objectData?.Name?.Contains(needle) == true) { candidates.Add(index); } }
                     break;
             }
-
-            if (candidates.Count > 0) return candidates[Game1.random.Next(candidates.Count)].ToString();
-            return "-1";
+            return candidates.Any() ? candidates[Game1.random.Next(candidates.Count)] : "-1";
         }
 
         /// <summary>
@@ -389,7 +322,7 @@ namespace MarketDay.Utility
             }
         }
 
-        public static Dictionary<ISalable, int[]> RemoveSpecifiedJAPacks(Dictionary<ISalable, int[]> stock)
+        public static Dictionary<ISalable, ItemStockInformation> RemoveSpecifiedJAPacks(Dictionary<ISalable, ItemStockInformation> stock)
         {
             List<ISalable> removeItems = (stock.Keys.Where(item => ItemsToRemove.Contains(item.Name))).ToList();
 
@@ -401,23 +334,23 @@ namespace MarketDay.Utility
             return stock;
         }
 
-        public static void RemoveSoldOutItems(Dictionary<ISalable, int[]> stock)
+        public static void RemoveSoldOutItems(Dictionary<ISalable, ItemStockInformation> stock)
         {
-            List<ISalable> keysToRemove = (stock.Where(kvp => kvp.Value[1] == 0).Select(kvp => kvp.Key)).ToList();
+            List<ISalable> keysToRemove = (stock.Where(kvp => kvp.Value.Stock < 1).Select(kvp => kvp.Key)).ToList();
             foreach (ISalable item in keysToRemove)
                 stock.Remove(item);
         }
 
         public static bool IsInSeasonCrop(string itemId)
         {
-            if (_cropData.ContainsKey(itemId))
+            if (Game1.cropData.TryGetValue(itemId, out var cd))
             {
-                return _cropData[itemId].Seasons.Contains(Game1.season);
+                return cd.Seasons.Contains(Game1.season);
             }
 
-            if (_fruitTreeData.ContainsKey(itemId))
+            if (Game1.fruitTreeData.TryGetValue(itemId, out var fd))
             {
-                return _fruitTreeData[itemId].Seasons.Contains(Game1.season);
+                return fd.Seasons.Contains(Game1.season);
             }
 
             return false;

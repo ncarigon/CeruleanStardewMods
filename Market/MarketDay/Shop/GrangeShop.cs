@@ -418,7 +418,7 @@ namespace MarketDay.Shop
         }
 
 
-        private bool OnPurchase(ISalable item, Farmer who, int stack)
+        private bool OnPurchase(ISalable item, Farmer who, int stack, ItemStockInformation stock)
         {
             if (GrangeChest is null)
             {
@@ -439,15 +439,12 @@ namespace MarketDay.Shop
             return false;
         }
 
-        private int[] getSellPriceArrayFromShopStock(Item item)
+        private ItemStockInformation getSellPriceArrayFromShopStock(Item item)
         {
             if (StockManager?.ItemPriceAndStock is null)
             {
                 MarketDay.Log($"getSellPriceArrayFromShopStock: no Stockmanager or no StockManager.ItemPriceAndStock", LogLevel.Warn);
-                return new[]
-                {
-                    StardewValley.Utility.getSellToStorePriceOfItem(item, false)
-                };
+                return new(StardewValley.Utility.getSellToStorePriceOfItem(item, false), 1);
             }
             foreach (var (stockItem, priceAndQty) in StockManager.ItemPriceAndStock)
             {
@@ -456,19 +453,16 @@ namespace MarketDay.Shop
             }
 
             MarketDay.Log($"getSellPriceArrayFromShopStock: returning empty for item {item.Name}", LogLevel.Warn);
-            return new[]
-            {
-                StardewValley.Utility.getSellToStorePriceOfItem(item, false)
-            };
+            return new(StardewValley.Utility.getSellToStorePriceOfItem(item, false), 1);
         }
 
         /// <summary>
         /// Generate a dictionary of goods for sale and quantities, to be consumed by the game's shop menu
         /// </summary>
-        private Dictionary<ISalable, int[]> ShopStock()
+        private Dictionary<ISalable, ItemStockInformation> ShopStock()
         {
             // this needs to filter StockManager.ItemPriceAndStock
-            var stock = new Dictionary<ISalable, int[]>();
+            var stock = new Dictionary<ISalable, ItemStockInformation>();
 
             if (GrangeChest is null)
             {
@@ -671,9 +665,9 @@ namespace MarketDay.Shop
             {
                 try
                 {
+                    var farmer = Game1.GetPlayer(PlayerID, true) ?? Game1.MasterPlayer;
                     Log($"Paying {PlayerID}", LogLevel.Trace);
-                    Log($"Paying {Game1.getFarmer(PlayerID).Name}", LogLevel.Trace);
-                    var farmer = Game1.getFarmer(PlayerID);
+                    Log($"Paying {farmer.Name}", LogLevel.Trace);
                     Game1.player.team.AddIndividualMoney(farmer, salePrice);
                 }
                 catch (Exception ex)
@@ -1159,10 +1153,9 @@ namespace MarketDay.Shop
             }
             foreach (var (Salable, priceAndStock) in StockManager.ItemPriceAndStock)
             {
-                // priceAndStock: price, stock, currency obj, currency stack
-                Log($"    Stock item {Salable.DisplayName} price {priceAndStock[0]} stock {priceAndStock[1]}",
+                Log($"    Stock item {Salable.DisplayName} price {priceAndStock.Price} stock {priceAndStock.Stock}",
                     LogLevel.Trace);
-                var stack = Math.Min(priceAndStock[1], 13);
+                var stack = Math.Min(priceAndStock.Stock, 13);
                 while (stack-- > 0)
                 {
                     if (Salable is Item item)

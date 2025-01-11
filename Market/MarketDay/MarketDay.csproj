@@ -8,22 +8,26 @@
         <RootNamespace>MarketDay</RootNamespace>
         <GamePath>/Volumes/Daten/Games/Steam/steamapps/common/Stardew Valley/Contents/MacOS</GamePath>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <NoWarn>1701;1702;IDE1006;IDE0060</NoWarn>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <NoWarn>1701;1702;IDE1006;IDE0060</NoWarn>
+    </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
+
     <ItemGroup>
-        <Reference Include="ContentPatcher">
-            <HintPath>$(GamePath)/Mods/ContentPatcher/ContentPatcher.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
-    </ItemGroup>
-    <ItemGroup>
-        <Reference Include="MailFrameworkMod">
-            <SpecificVersion>False</SpecificVersion>
-            <HintPath>$(GamePath)/Mods/MailFrameworkMod/MailFrameworkMod.dll</HintPath>
-            <Private>False</Private>
-        </Reference>
+      <Reference Include="ContentPatcher">
+        <HintPath>D:\games\Stardew Valley\MO2\mods\Content Patcher\ContentPatcher\ContentPatcher.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
+      <Reference Include="MailFrameworkMod">
+        <HintPath>D:\games\Stardew Valley\MO2\mods\MailFrameworkMod\MailFrameworkMod\MailFrameworkMod.dll</HintPath>
+        <Private>False</Private>
+      </Reference>
     </ItemGroup>
 </Project>

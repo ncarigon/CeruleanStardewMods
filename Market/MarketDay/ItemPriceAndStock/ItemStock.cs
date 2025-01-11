@@ -23,7 +23,7 @@ namespace MarketDay.ItemPriceAndStock
         private Dictionary<double, string[]> _priceMultiplierWhen;
 
         private ItemBuilder _builder;
-        private Dictionary<ISalable, int[]> _itemPriceAndStock;
+        private Dictionary<ISalable, ItemStockInformation> _itemPriceAndStock;
 
         /// <summary>
         /// Initialize the ItemStock, doing error checking on the quality, and setting the price to the store price
@@ -65,7 +65,7 @@ namespace MarketDay.ItemPriceAndStock
         /// Resets the items of this item stock, with condition checks and randomization
         /// </summary>
         /// <returns></returns>
-        public Dictionary<ISalable, int[]> Update()
+        public Dictionary<ISalable, ItemStockInformation> Update()
         {
             if (When != null && !APIs.Conditions.CheckConditions(When))
                 return null; //did not pass conditions
@@ -77,7 +77,7 @@ namespace MarketDay.ItemPriceAndStock
                 return null;
             }
 
-            _itemPriceAndStock = new Dictionary<ISalable, int[]>();
+            _itemPriceAndStock = new Dictionary<ISalable, ItemStockInformation>();
             _builder.SetItemPriceAndStock(_itemPriceAndStock);
 
             double priceMultiplier = 1;

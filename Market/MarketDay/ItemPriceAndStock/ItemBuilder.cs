@@ -5,7 +5,7 @@ using StardewValley.Objects;
 using StardewValley.Tools;
 using System.Collections.Generic;
 using MarketDay.Utility;
-using System;
+using System.Linq;
 
 namespace MarketDay.ItemPriceAndStock
 {
@@ -15,7 +15,7 @@ namespace MarketDay.ItemPriceAndStock
     /// </summary>
     class ItemBuilder
     {
-        private Dictionary<ISalable, int[]> _itemPriceAndStock;
+        private Dictionary<ISalable, ItemStockInformation> _itemPriceAndStock;
         private readonly ItemStock _itemStock;
         private const string CategorySearchPrefix = "%Category:";
         private const string NameSearchPrefix = "%Match:";
@@ -26,7 +26,7 @@ namespace MarketDay.ItemPriceAndStock
         }
 
         /// <param name="itemPriceAndStock">the ItemPriceAndStock this builder will add items to</param>
-        public void SetItemPriceAndStock(Dictionary<ISalable, int[]> itemPriceAndStock)
+        public void SetItemPriceAndStock(Dictionary<ISalable, ItemStockInformation> itemPriceAndStock)
         {
             _itemPriceAndStock = itemPriceAndStock;
         }
@@ -96,7 +96,8 @@ namespace MarketDay.ItemPriceAndStock
             
             if (_itemStock.IsRecipe)
             {
-                if (!ItemsUtil.RecipesList.Contains(item.Name))
+                if (!DataLoader.CraftingRecipes(Game1.content).Keys.Any(c => string.Compare($"{c} Recipe", item?.Name) == 0)
+                    && !DataLoader.CookingRecipes(Game1.content).Keys.Any(c => string.Compare($"{c} Recipe", item?.Name) == 0))
                 {
                     MarketDay.Log($"{item.Name} is not a valid recipe and won't be added.", LogLevel.Trace);
                     return false;
@@ -147,24 +148,24 @@ namespace MarketDay.ItemPriceAndStock
         /// <param name="item">An instance of the item</param>
         /// <param name="priceMultiplier"></param>
         /// <returns>The array that's the second parameter in ItemPriceAndStock</returns>
-        private int[] GetPriceStockAndCurrency(ISalable item, double priceMultiplier)
+        private ItemStockInformation GetPriceStockAndCurrency(ISalable item, double priceMultiplier)
         {
-            int[] priceStockCurrency;
+            ItemStockInformation priceStockCurrency;
             //if no price is provided, use the item's sale price multiplied by defaultSellPriceMultiplier
             var price = (_itemStock.StockPrice == -1) ? (int)(item.salePrice()* _itemStock.DefaultSellPriceMultiplier) : _itemStock.StockPrice;
             price = (int)(price*priceMultiplier);
 
             if (_itemStock.CurrencyObjectId == "-1") // no currency item
             {
-                priceStockCurrency = new[] { price, _itemStock.Stock };
+                priceStockCurrency = new(price, _itemStock.Stock);
             }
             else if (_itemStock.StockCurrencyStack == -1) //no stack provided for currency item so defaults to 1
             {
-                priceStockCurrency = new[] { price, _itemStock.Stock, int.Parse(_itemStock.CurrencyObjectId) };
+                priceStockCurrency = new(price, _itemStock.Stock, _itemStock.CurrencyObjectId);
             }
             else //both currency item and stack provided
             {
-                priceStockCurrency = new[] { price, _itemStock.Stock, int.Parse(_itemStock.CurrencyObjectId), _itemStock.StockCurrencyStack };
+                priceStockCurrency = new(price, _itemStock.Stock, _itemStock.CurrencyObjectId, _itemStock.StockCurrencyStack);
             }
 
             return priceStockCurrency;

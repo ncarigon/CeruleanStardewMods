@@ -17,8 +17,8 @@ namespace MarketDay.Utility
 {
     public static class Schedule
     {
-        public static Dictionary<int, List<string>> NPCInteractions = new();
-        internal static HashSet<NPC> TownieVisitorsToday = new();
+        public static Dictionary<int, List<string>> NPCInteractions { get; } = new();
+        internal static HashSet<NPC> TownieVisitorsToday { get; } = new();
 
         private static Stack<Point> FindPathForNpcSchedules(
             Point startPoint,
@@ -601,22 +601,24 @@ namespace MarketDay.Utility
         {
             var pixels = 0;
             Point? nextTile = null;
-            foreach (var tile in route)
+            if (route is not null)
             {
-                if (!nextTile.HasValue)
+                foreach (var tile in route)
                 {
+                    if (!nextTile.HasValue)
+                    {
+                        nextTile = tile;
+                        continue;
+                    }
+
+                    if (Math.Abs(nextTile.Value.X - tile.X) + Math.Abs(nextTile.Value.Y - tile.Y) == 1)
+                    {
+                        pixels += 64;
+                    }
+
                     nextTile = tile;
-                    continue;
                 }
-
-                if (Math.Abs(nextTile.Value.X - tile.X) + Math.Abs(nextTile.Value.Y - tile.Y) == 1)
-                {
-                    pixels += 64;
-                }
-
-                nextTile = tile;
             }
-
             var minutes = pixels / 96.0;
             return minutes;
         }
@@ -735,7 +737,7 @@ namespace MarketDay.Utility
                     {
                         stack = addToStackForSchedule.Invoke<Stack<Point>>(stack,
                             StardewValley.Pathfinding.PathFindController.findPathForNPCSchedules(startPoint, new Point(endingX, endingY),
-                                locationFromName, 30000));
+                                locationFromName, 30000, npc));
                     }
                 }
             }

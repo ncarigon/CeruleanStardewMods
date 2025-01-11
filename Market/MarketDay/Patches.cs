@@ -154,7 +154,7 @@ namespace MarketDay
     }
 
     [HarmonyPatch(typeof(StardewValley.Pathfinding.PathFindController))]
-    [HarmonyPatch("findPathForNPCSchedules")]
+    [HarmonyPatch("findPathForNPCSchedules", new Type[] { typeof(Point), typeof(Point), typeof(GameLocation), typeof(int), typeof(Character) })]
     //  alter paths through Town to travel via market shops 
     public class Postfix_findPathForNPCSchedules
     {

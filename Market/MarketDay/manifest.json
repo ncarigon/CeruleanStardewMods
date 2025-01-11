@@ -1,9 +1,9 @@
 ﻿{
   "Name": "Market Day",
-  "Author": "LiSoNaZa",
-  "Version": "1.0.1",
+  "Author": "ceruleandeep, LiSoNaZa, NCarigon",
+  "Version": "1.2.0",
   "Description": "Market Day",
-  "UniqueID": "lisonaza.MarketDay",
+  "UniqueID": "ceruleandeep.MarketDay",
   "EntryDll": "MarketDay.dll",
   "MinimumApiVersion": "4.0.0",
   "Dependencies": [
@@ -29,6 +29,6 @@
     }
   ],
   "UpdateKeys": [
-    "Nexus:26208"
+    "Nexus:???"
   ]
 }

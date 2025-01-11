@@ -564,7 +564,7 @@ namespace MarketDay
             Log($"OnPeerConnected_ReloadMarket: invalidating Maps/Town", LogLevel.Info, false);
             helper.GameContent.InvalidateCache("Maps/Town");
             
-            var newFarmer = Game1.getFarmer(e.Peer.PlayerID);
+            var newFarmer = Game1.GetPlayer(e.Peer.PlayerID, true) ?? Game1.MasterPlayer;
             var r = Game1.random.Next(5);
             var multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
             var globalChatInfoMessage = helper.Reflection.GetMethod(multiplayer, "globalChatInfoMessage");
@@ -581,8 +581,8 @@ namespace MarketDay
             
             Log($"OnPeerDisonnected_ReloadMarket: invalidating Maps/Town", LogLevel.Info, false);
             helper.GameContent.InvalidateCache("Maps/Town");
-            
-            var newFarmer = Game1.getFarmer(e.Peer.PlayerID);
+
+            var newFarmer = Game1.GetPlayer(e.Peer.PlayerID, true) ?? Game1.MasterPlayer;
             if (newFarmer is null) return;
             var r = Game1.random.Next(5);
             var multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
@@ -609,7 +609,7 @@ namespace MarketDay
 
             LogShopPositions("OnOneSecondUpdateTicking_SyncMap checking for invalid shops");
             var shopTiles = MapUtility.ShopTiles;
-            foreach (var shop in MapUtility.OpenShops().Where(shop => !shopTiles.Keys.Contains(shop.Origin)))
+            foreach (var shop in MapUtility.OpenShops().Where(shop => !shopTiles.ContainsKey(shop.Origin)))
             {
                 Log($"Shop at {shop.Origin} is not on a shop tile", LogLevel.Trace);
                 shop.CloseShop();
@@ -714,8 +714,8 @@ namespace MarketDay
         {
             Log($"RecalculateSchedules: begins at {Game1.currentSeason} {Game1.dayOfMonth} {Game1.timeOfDay} {Game1.ticks}", LogLevel.Trace);
 
-            Schedule.NPCInteractions = new();
-            Schedule.TownieVisitorsToday = new HashSet<NPC>();
+            Schedule.NPCInteractions.Clear();
+            Schedule.TownieVisitorsToday.Clear();
 
             // var npcs = new List<NPC>();
             // StardewValley.Utility.getAllCharacters(npcs);
@@ -851,7 +851,7 @@ namespace MarketDay
         private static void OnDayEnding_CloseShopsSendMailClearVisitorList(object sender, EventArgs e)
         {
             CloseShopsRemoveFurnitureSendMail(MapUtility.ShopAtTile().Values);
-            Schedule.TownieVisitorsToday = new HashSet<NPC>();
+            Schedule.TownieVisitorsToday.Clear();
         }
 
         private static void CloseShopsRemoveFurnitureSendMail(IEnumerable<GrangeShop> shops)
@@ -1053,8 +1053,6 @@ namespace MarketDay
             
             Translations.UpdateSelectedLanguage();
             ShopManager.UpdateTranslations();
-
-            ItemsUtil.UpdateObjectInfoSource();
 
             ShopManager.InitializeShops();
             ShopManager.InitializeItemStocks();

@@ -12,7 +12,7 @@ namespace MarketDay.ItemPriceAndStock
     /// </summary>
     public class ItemPriceAndStockManager
     {
-        public Dictionary<ISalable, int[]> ItemPriceAndStock { get; set; }
+        public Dictionary<ISalable, ItemStockInformation> ItemPriceAndStock { get; set; }
         private readonly ItemStock[] _itemStocks;
         private readonly double _defaultSellPriceMultipler;
         private readonly Dictionary<double, string[]> _priceMultiplierWhen;
@@ -48,7 +48,7 @@ namespace MarketDay.ItemPriceAndStock
         /// </summary>
         public void Update()
         {
-            ItemPriceAndStock = new Dictionary<ISalable, int[]>();
+            ItemPriceAndStock = new Dictionary<ISalable, ItemStockInformation>();
             MarketDay.Log($"Updating {_shopName}", LogLevel.Trace, true);
 
             foreach (ItemStock stock in _itemStocks)
@@ -68,7 +68,7 @@ namespace MarketDay.ItemPriceAndStock
         /// Adds the stock from each ItemStock to the overall inventory
         /// </summary>
         /// <param name="dict"></param>
-        private void Add(Dictionary<ISalable, int[]> dict)
+        private void Add(Dictionary<ISalable, ItemStockInformation> dict)
         {
             foreach (var kvp in dict)
             {

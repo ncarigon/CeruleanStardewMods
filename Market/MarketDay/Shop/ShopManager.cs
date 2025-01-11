@@ -8,6 +8,7 @@ using System.Linq;
 using MarketDay.API;
 using MarketDay.Data;
 using Microsoft.Xna.Framework.Graphics;
+using HarmonyLib;
 
 namespace MarketDay.Shop
 {
@@ -29,12 +30,12 @@ namespace MarketDay.Shop
             MarketDay.Log("Clearing content packs (what's the worst that could happen, right?)", LogLevel.Debug);
             foreach (var grangeShop in GrangeShops.Keys) GrangeShops.Remove(grangeShop);
             foreach (var animalShop in AnimalShops.Keys) GrangeShops.Remove(animalShop);
-            
-            MarketDay.Log("Adding Content Packs...", LogLevel.Info);
-            MarketDay.Log(MarketDay.helper.ContentPacks.GetOwned().ToString(), LogLevel.Debug);
-            foreach (var contentPack in MarketDay.helper.ContentPacks.GetOwned())
+
+            var contentPacks = MarketDay.helper.ContentPacks.GetOwned();
+            MarketDay.Log($"Adding Content Packs {contentPacks?.Count() ?? 0}", LogLevel.Info);
+            foreach (var contentPack in contentPacks)
             {
-                MarketDay.Log("ContentPack", LogLevel.Info);
+                MarketDay.Log($"ContentPack: {contentPack.Manifest.Name}", LogLevel.Info);
                 if (!contentPack.HasFile("shops.json"))
                 {
                     MarketDay.Log($"No shops.json found from the mod {contentPack.Manifest.UniqueID}. " +
@@ -68,11 +69,10 @@ namespace MarketDay.Shop
         /// <param name="contentPack"></param>
         private static void RegisterShops(ContentPack data, IContentPack contentPack)
         {
-            MarketDay.Log("RegisterShops", LogLevel.Info);
+            MarketDay.Log($"RegisterShops [{data?.GrangeShops?.Length ?? 0}]", LogLevel.Info);
             MarketDay.Config.ShopsEnabled ??= new Dictionary<string, bool>();
             if (data.GrangeShops != null)
             {
-                MarketDay.Log(data.GrangeShops.Length.ToString(), LogLevel.Debug);
                 foreach (var shopPack in data.GrangeShops)
                 {
                     MarketDay.Log(shopPack.ShopName, LogLevel.Debug);
