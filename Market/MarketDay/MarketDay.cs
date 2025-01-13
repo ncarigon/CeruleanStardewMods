@@ -378,25 +378,30 @@ namespace MarketDay
                     Log($"Could not find shop for {args[0]}, should be one of [{playerShops}]", LogLevel.Error);
                     return;
                 }
-                grangeShop.SetSharedValue(GrangeShop.GoldTodayKey, int.Parse(args[1]));
-                Log($"Shop {grangeShop.ShopName} gold today {grangeShop.GetSharedValue(GrangeShop.GoldTodayKey)}", LogLevel.Debug);
+                if (int.TryParse(args[1], out var today))
+                {
+                    grangeShop.SetSharedValue(GrangeShop.GoldTodayKey, today);
+                    Log($"Shop {grangeShop.ShopName} gold today {grangeShop.GetSharedValue(GrangeShop.GoldTodayKey)}", LogLevel.Debug);
+                }
                 return;
             }
-            SetSharedValue(TotalGoldKey, int.Parse(args[0]));
-            Log($"Total gold {GetSharedValue(TotalGoldKey)}", LogLevel.Debug);
+            if (int.TryParse(args[0], out var total))
+            {
+                SetSharedValue(TotalGoldKey, total);
+                Log($"Total gold {GetSharedValue(TotalGoldKey)}", LogLevel.Debug);
+            }
         }
         
         private static void LevelUp(string command, string[] args)
         {
             if (args.Length == 1)
             {
-                var idx = int.Parse(args[0]);
-                if (Progression.Levels.Count <= idx)
+                if (int.TryParse(args[0], out var idx) && Progression.Levels.Count <= idx)
                 {
                     Log($"Could not find level {args[0]}, should be [0..{Progression.Levels.Count-1}]", LogLevel.Error);
                     return;
                 }
-                var level = Progression.Levels[int.Parse(args[0])];
+                var level = Progression.Levels[idx];
                 Log($"Setting level to {level.Name}", LogLevel.Debug);
                 SetGold("", new[]{$"{level.UnlockAtEarningsForDifficulty}"});
             }
@@ -1567,10 +1572,8 @@ namespace MarketDay
 
         internal static int GetSharedValue(string key)
         {
-            var val = 0;
             var strVal = GetSharedString(key);
-            if (strVal is not null) val = int.Parse(strVal);
-            return val;
+            return strVal is not null && int.TryParse(strVal, out var val) ? val : 0;
         }
 
         internal static string GetSharedString(string key)

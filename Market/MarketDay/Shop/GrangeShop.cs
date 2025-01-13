@@ -248,12 +248,14 @@ namespace MarketDay.Shop
 
             if (StockChest.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/{key}", out var stringVal))
             {
-                var val = int.Parse(stringVal);
-                val += amount;
-                StockChest.modData[$"{MarketDay.SMod.ModManifest.UniqueID}/{key}"] = $"{val}";
-                return;
+                if (int.TryParse(stringVal, out var val))
+                {
+                    val += amount;
+                    StockChest.modData[$"{MarketDay.SMod.ModManifest.UniqueID}/{key}"] = $"{val}";
+                    return;
+                }
+                MarketDay.Log($"GetSharedValue: StockChest modData does not contain numeric data at {key}", LogLevel.Warn);
             }
-
             MarketDay.Log($"GetSharedValue: StockChest modData does not contain {key}", LogLevel.Warn);
         }
 
@@ -267,8 +269,12 @@ namespace MarketDay.Shop
 
             if (StockChest.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/{key}", out var stringVal))
             {
-                var val = int.Parse(stringVal);
-                return val;
+                if (int.TryParse(stringVal, out var val))
+                {
+                    return val;
+                }
+                MarketDay.Log($"GetSharedValue: StockChest modData does not contain numeric data at {key}", LogLevel.Warn);
+                return 0;
             }
 
             MarketDay.Log($"GetSharedValue: StockChest modData does not contain {key}", LogLevel.Warn);

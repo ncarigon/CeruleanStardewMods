@@ -84,7 +84,7 @@ namespace MarketDay.Utility
         private static Object AttachmentForPrizeMail(string ObjName, string Flavor, int Stack, int Quality=0)
         {
             var idx = ItemsUtil.GetIndexByName(ObjName);
-            if (Int32.Parse(idx) < 0)
+            if (idx?.Equals("-1") == true)
             {
                 MarketDay.Log($"Could not find prize object {ObjName}", LogLevel.Error);
                 idx = "169";
@@ -96,22 +96,16 @@ namespace MarketDay.Utility
             if (Flavor is null || Flavor.Length <= 0) return attachment;
             
             var prIdx = ItemsUtil.GetIndexByName(Flavor);
-            if (Int32.Parse(idx) < 0)
+            if (prIdx?.Equals("-1") == true)
             {
                 MarketDay.Log($"Could not find flavor object {Flavor}", LogLevel.Error);
                 prIdx = "258";
             }
             attachment.preservedParentSheetIndex.Value = prIdx;
-            attachment.preserve.Value = ObjName switch
+            if (Enum.TryParse(ObjName, out Object.PreserveType pt))
             {
-                "Wine" => Object.PreserveType.Wine,
-                "Jelly" => Object.PreserveType.Jelly,
-                "Juice" => Object.PreserveType.Juice,
-                "Pickle" => Object.PreserveType.Pickle,
-                "Roe" => Object.PreserveType.Roe,
-                "Aged Roe" => Object.PreserveType.AgedRoe,
-                _ => Object.PreserveType.Jelly
-            };
+                attachment.preserve.Value = pt;
+            }
 
             return attachment;
         }

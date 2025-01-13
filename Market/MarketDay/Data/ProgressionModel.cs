@@ -135,7 +135,7 @@ namespace MarketDay.Data
                     var item = ItemsUtil.GetIndexByName(name);
                     if (item == "-1") MarketDay.Log($"    Could not get index for object: {name}", LogLevel.Warn);
                     
-                    if (name is "Wine" or "Jelly" or "Juice" or "Pickle" or "Roe" or "Aged Roe")
+                    if (Enum.TryParse(name, out StardewValley.Object.PreserveType _))
                     {
                         var preservedGoods = prizeLevel.Flavor;
                         var item1 = ItemsUtil.GetIndexByName(preservedGoods);
