@@ -97,7 +97,7 @@ namespace MarketDay
             Helper.Events.GameLoop.Saved += OnSaved_DoNothing;
             Helper.Events.Input.ButtonPressed += OnButtonPressed_ShowShopOrGrangeOrStats;
 
-            var harmony = new Harmony("lisonaza.MarketDay");
+            var harmony = new Harmony("ceruleandeep.MarketDay");
             harmony.PatchAll();
 
             helper.ConsoleCommands.Add("md_furniture", "Remove stray furniture", RemoveStrayFurniture);

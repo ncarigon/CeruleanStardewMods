@@ -189,8 +189,12 @@ namespace MarketDay
             if (!MarketDay.IsMarketDay) return;
             
             if (MapUtility.ShopTiles.Count == 0) return;
-            
-            __result = Schedule.parseMasterSchedule(__instance, rawData);
+
+            try {
+                __result = Schedule.parseMasterSchedule(__instance, rawData);
+            } catch {
+                MarketDay.Log($"Failed to updated master schedule for NPC '{__instance?.Name}'", LogLevel.Debug);
+            }
         }
     }
     
