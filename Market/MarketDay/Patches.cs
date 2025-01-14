@@ -30,7 +30,7 @@ namespace MarketDay
                 LogLevel.Debug, true);
 
             if (owner is null) return true;
-            if (owner == $"Farmer:{who.Name}" || MarketDay.Config.PeekIntoChests) return true;
+            if (owner == $"Farmer:{who.Name}" || (MarketDay.Config.SharedShop && owner == $"Farmer:{Game1.MasterPlayer.Name}") || MarketDay.Config.PeekIntoChests) return true;
 
             MarketDay.Log(
                 $"Prefix_Chest_checkForAction preventing action on object at {__instance.TileLocation} owned by {owner}",
@@ -56,7 +56,7 @@ namespace MarketDay
                 $"Prefix_Sign_checkForAction checking {__instance} {__instance.DisplayName} owner {owner} at {__instance.TileLocation}",
                 LogLevel.Debug, true);
 
-            if (owner is null || owner == $"Farmer:{who.Name}") return true;
+            if (owner is null || owner == $"Farmer:{who.Name}" || (MarketDay.Config.SharedShop && owner == $"Farmer:{Game1.MasterPlayer.Name}")) return true;
 
             MarketDay.Log(
                 $"Prefix_Sign_checkForAction preventing action on object at {__instance.TileLocation} owned by {owner}",
@@ -83,7 +83,7 @@ namespace MarketDay
                 LogLevel.Debug, true);
 
             if (owner is null) return true;
-            if (owner == $"Farmer:{Game1.player.Name}" || MarketDay.Config.PeekIntoChests) return true;
+            if (owner == $"Farmer:{Game1.player.Name}" || (MarketDay.Config.SharedShop && owner == $"Farmer:{Game1.MasterPlayer.Name}") || MarketDay.Config.PeekIntoChests) return true;
 
             MarketDay.Log(
                 $"Prefix_Object_performUseAction preventing use of object at {__instance.TileLocation} owned by {owner}",
@@ -122,34 +122,33 @@ namespace MarketDay
         }
     }
 
-
-    [HarmonyPatch(typeof(Chest))]
+    [HarmonyPatch(typeof(GameLocation))]
     [HarmonyPatch("draw")]
-    [HarmonyPatch(new Type[] {typeof(SpriteBatch), typeof(int), typeof(int), typeof(float)})]
-    public class Postfix_draw
-    {
-        public static void Postfix(Chest __instance, SpriteBatch spriteBatch, int x, int y)
-        {
-            if (!__instance.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/{GrangeShop.StockChestKey}",
-                out var ShopKey)) return;
+    [HarmonyPatch(new Type[] { typeof(SpriteBatch) })]
+    public class Postfix_draw {
+        public static void Postfix(GameLocation __instance, SpriteBatch b) {
+            __instance.Objects.SelectMany(o => o.Values).Select(o => o as Chest).Where(o => o is not null).Do(chest => {
+                if (!chest.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/{GrangeShop.StockChestKey}",
+                    out var ShopKey)) return;
 
-            // get shop for ShopKey
-            if (!ShopManager.GrangeShops.TryGetValue(ShopKey, out var grangeShop))
-            {
-                MarketDay.Log(
-                    $"Postfix_draw: shop '{ShopKey}' not found in ShopManager.GrangeShops, can't draw",
-                    LogLevel.Error);
-                return;
-            }
+                // get shop for ShopKey
+                if (!ShopManager.GrangeShops.TryGetValue(ShopKey, out var grangeShop)) {
+                    MarketDay.Log(
+                        $"Postfix_draw: shop '{ShopKey}' not found in ShopManager.GrangeShops, can't draw",
+                        LogLevel.Error);
+                } else {
 
-            var tileLocation = grangeShop.Origin;
-            if (tileLocation == Vector2.Zero) return;
-            
-            var drawLayer = Math.Max(0f, (tileLocation.Y * Game1.tileSize - 24) / 10000f) + tileLocation.X * 1E-05f;
-            grangeShop.drawGrangeItems(tileLocation, spriteBatch, drawLayer);
-            
-            drawLayer = Math.Max(0f, (tileLocation.Y + 3) * Game1.tileSize / 10000f) + tileLocation.X * 1E-05f;
-            grangeShop.DrawSign(tileLocation, spriteBatch, drawLayer);
+                    var tileLocation = grangeShop.Origin;
+                    if (tileLocation != Vector2.Zero) {
+
+                        var drawLayer = Math.Max(0f, (tileLocation.Y * Game1.tileSize - 24) / 10000f) + tileLocation.X * 1E-05f;
+                        grangeShop.drawGrangeItems(tileLocation, b, drawLayer);
+
+                        drawLayer = Math.Max(0f, (tileLocation.Y + 3) * Game1.tileSize / 10000f) + tileLocation.X * 1E-05f;
+                        grangeShop.DrawSign(tileLocation, b, drawLayer);
+                    }
+                }
+            });
         }
     }
 

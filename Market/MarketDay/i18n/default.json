@@ -33,6 +33,8 @@
   "cfg.game-mode": "Game mode",
   "cfg.challenge-mode": "Challenge Mode",
   "cfg.challenge-mode.msg": "In challenge mode you level up by selling items. Unlock more shops, auto-restock, higher bonuses.",
+  "cfg.shared-shop": "Shared Shop Mode",
+  "cfg.shared-shop.msg": "In this mode, the host and farmhands all manage a single shop.",
   "cfg.open-close-options": "Opening and closing",
   "cfg.open-close-options.msg": "If multiplayer, make sure everyone has the same settings here",
   "cfg.free-play-options": "Free Play Mode",

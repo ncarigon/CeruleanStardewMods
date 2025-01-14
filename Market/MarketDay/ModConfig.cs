@@ -6,6 +6,8 @@ namespace MarketDay
     internal class ModConfig
     {
         public bool Progression { get; set; } = true;
+
+        public bool SharedShop { get; set; } = true;
         
         public bool OnNextDayIfFestival { get; set; } = true;
 

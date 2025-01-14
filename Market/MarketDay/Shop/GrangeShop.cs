@@ -63,7 +63,8 @@ namespace MarketDay.Shop
 
         // state queries
 
-        public bool IsPlayerShop => PlayerID != 0;
+        public bool IsPlayerShop => PlayerID == Game1.player.uniqueMultiplayerID.Value
+                    || (MarketDay.Config.SharedShop && PlayerID == Game1.MasterPlayer.uniqueMultiplayerID.Value);
 
         public string? Owner()
         {
@@ -317,15 +318,15 @@ namespace MarketDay.Shop
 
             if (IsPlayerShop)
             {
-                if (PlayerID != Game1.player.UniqueMultiplayerID)
+                if (!MarketDay.Config.SharedShop && PlayerID != Game1.player.UniqueMultiplayerID)
                 {
                     var Owner = ShopName.Replace("Farmer:", "");
                     Game1.activeClickableMenu = new DialogueBox(Get("not-your-shop", new {Owner}));
                 }
                 else
                 {
-                    var rows = MarketDay.Progression.ShopSize / 3;
-                    Game1.activeClickableMenu = new StorageContainer(GrangeChest.Items, MarketDay.Progression.ShopSize,
+                    var rows = GrangeChest.Items.Count / 3;
+                    Game1.activeClickableMenu = new StorageContainer(GrangeChest.Items, GrangeChest.Items.Count,
                         rows, onGrangeChange,
                         StardewValley.Utility.highlightSmallObjects);
                 }
@@ -828,10 +829,11 @@ namespace MarketDay.Shop
             if (Game1.player.hasPlayerTalkedToNPC(npc.Name)) mult += 0.1;
             
             // * owner or owner's spouse is nearby
-            if (OwnerCharacter?.currentLocation.Name == "Town") mult += 0.2;    
+            if (OwnerCharacter?.currentLocation?.Name == "Town") mult += 0.2;    
             else if (OwnerCharacter is Farmer farmer)
             {
-                if (farmer.getSpouse().currentLocation.Name == "Town") mult += 0.2;
+                if (farmer?.getSpouse()?.currentLocation?.Name == "Town") mult += 0.2;
+                if (MarketDay.Config.SharedShop && Game1.getAllFarmers().Any(f => f?.currentLocation?.Name == "Town")) mult += 0.2;
             }
 
             return mult;
@@ -1025,7 +1027,8 @@ namespace MarketDay.Shop
                     ["furyx639.BetterChests/CraftFromChest"] = "Disabled",
                     ["furyx639.BetterChests/StashToChest"] = "Disabled",
                     ["Pathoschild.ChestsAnywhere/IsIgnored"] = "true",
-                    [$"{MarketDay.SMod.ModManifest.UniqueID}/{GrangeChestKey}"] = ShopKey
+                    [$"{MarketDay.SMod.ModManifest.UniqueID}/{GrangeChestKey}"] = ShopKey,
+                    [$"{MarketDay.SMod.ModManifest.UniqueID}/ShopSize"] = MarketDay.Progression.ShopSize.ToString()
                 }
             };
             location.setObject(freeTile, chest);
@@ -1322,8 +1325,9 @@ namespace MarketDay.Shop
                 return;
             }
 
-            while (GrangeChest.Items.Count < MarketDay.Progression.ShopSize) GrangeChest.Items.Add(null);
-
+            if (GrangeChest.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/ShopSize", out var v) && int.TryParse(v, out var shopSize)) {
+                while (GrangeChest.Items.Count < shopSize) GrangeChest.Items.Add(null);
+            }
             if (position < 0) return;
             if (position >= GrangeChest.Items.Count) return;
             if (GrangeChest.Items[position] != null && !force) return;

@@ -123,7 +123,9 @@ namespace MarketDay
         
         private static void MakePlayerShops()
         {
-            var farmers = Game1.getAllFarmers().Where(f => f.isActive()).ToList();
+            var farmers = MarketDay.Config.SharedShop
+                ? new List<Farmer>() { Game1.MasterPlayer }
+                : Game1.getAllFarmers().Where(f => f.isActive()).ToList();
             var multiplayer = farmers.Count > 1;
             foreach (var farmer in farmers)
             {
@@ -1088,7 +1090,7 @@ namespace MarketDay
             configMenu.Register(ModManifest, () => Config = new ModConfig(), SaveConfig);
             configMenu.OnFieldChanged(ModManifest, GMCMFieldChanged);
 
-            configMenu.SetTitleScreenOnlyForNextOptions(ModManifest, false);
+            configMenu.SetTitleScreenOnlyForNextOptions(ModManifest, true);
 
             configMenu.AddSectionTitle(ModManifest,
                 () => Helper.Translation.Get("cfg.game-mode"));
@@ -1102,7 +1104,15 @@ namespace MarketDay
                 () => Helper.Translation.Get("cfg.challenge-mode.msg"),
                 fieldId: "fm_ChallengeMode"
             );
-            
+
+            configMenu.AddBoolOption(ModManifest,
+                () => Config.SharedShop,
+                val => Config.SharedShop = val,
+                () => Helper.Translation.Get("cfg.shared-shop"),
+                () => Helper.Translation.Get("cfg.shared-shop.msg"),
+                fieldId: "fm_SharedShop"
+            );
+
             configMenu.AddSectionTitle(ModManifest,
                 () => Helper.Translation.Get("cfg.open-close-options"));
             configMenu.AddParagraph(ModManifest,
