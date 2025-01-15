@@ -157,13 +157,13 @@ namespace MarketDay.Utility
                 for (var y = -2; y <= 1; y++)
                 {
                     var search = tile + new Vector2(x, y);
-                    if (!MarketDay.Config.DontLogShopPositions) MarketDay.Log($"    ShopNearTile {x} {y} {search}", LogLevel.Debug, true);
+                    MarketDay.Log($"    ShopNearTile {x} {y} {search}", LogLevel.Debug, true);
                     if (!Game1.currentLocation.objects.TryGetValue(search, out var chest) ||
                         chest is not Chest) continue;
                     chest.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/{GrangeShop.StockChestKey}",
                         out var shopOwner);
                     if (shopOwner is null) return null;
-                    if (!MarketDay.Config.DontLogShopPositions) MarketDay.Log($"    ShopNearTile {shopOwner}", LogLevel.Debug, true);
+                    MarketDay.Log($"    ShopNearTile {shopOwner}", LogLevel.Debug, true);
                     if (ShopManager.GrangeShops.TryGetValue(shopOwner, out var shop)) return shop;
                 }
             }
@@ -182,16 +182,16 @@ namespace MarketDay.Utility
             var frontTileIndexAt = Game1.currentLocation.getTileIndexAt((int) tile.X, (int) tile.Y, "Front");
             var tileIndexAt = bldgTileIndexAt == -1 ? frontTileIndexAt : bldgTileIndexAt;
 
-            if (!MarketDay.Config.DontLogShopPositions) MarketDay.Log($"ShopNearTile {tile} {tileIndexAt}", LogLevel.Debug, false);
+            MarketDay.Log($"ShopNearTile {tile} {tileIndexAt}", LogLevel.Debug, true);
             if (!ChestOffsetForTile.TryGetValue(tileIndexAt, out var offset)) return null;
 
             var search = tile + offset;
-            if (!MarketDay.Config.DontLogShopPositions) MarketDay.Log($"    ShopNearTile {tile} -> {search}", LogLevel.Debug, false);
+            MarketDay.Log($"    ShopNearTile {tile} -> {search}", LogLevel.Debug, true);
             if (!Game1.currentLocation.objects.TryGetValue(search, out var chest) || chest is not Chest) return null;
             chest.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/{GrangeShop.StockChestKey}",
                 out var shopOwner);
             if (shopOwner is null) return null;
-            if (!MarketDay.Config.DontLogShopPositions) MarketDay.Log($"    ShopNearTile {shopOwner}", LogLevel.Debug, true);
+            MarketDay.Log($"    ShopNearTile {shopOwner}", LogLevel.Debug, true);
             return ShopManager.GrangeShops.TryGetValue(shopOwner, out var shop) ? shop : null;
         }
 

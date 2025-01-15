@@ -108,7 +108,7 @@ namespace MarketDay
 
             var owner = MapUtility.Owner(__instance);
 
-            if (!MarketDay.Config.DontLogShopPositions) MarketDay.Log(
+            MarketDay.Log(
                 $"Prefix_Object_performToolAction checking {__instance} {__instance.DisplayName} owner {owner} at {__instance.TileLocation}",
                 LogLevel.Debug, true);
 

@@ -276,7 +276,6 @@ namespace MarketDay
         
         private static void LogShopPositions(string caller="unspecified")
         {
-            if (MarketDay.Config.DontLogShopPositions) return;
             try
             {
                 var state = new List<string>
@@ -1370,13 +1369,6 @@ namespace MarketDay
                 val => Config.NoFreeItems = val,
                 () => Helper.Translation.Get("cfg.no-free-items"),
                 () => Helper.Translation.Get("cfg.no-free-items.msg")
-            );
-
-            configMenu.AddBoolOption(ModManifest,
-                () => Config.DontLogShopPositions,
-                val => Config.DontLogShopPositions = val,
-                () => Helper.Translation.Get("cfg.dont-log-shop-positions"),
-                () => Helper.Translation.Get("cfg.dont-log-shop-positions.msg")
             );
 
             configMenu.AddBoolOption(ModManifest,

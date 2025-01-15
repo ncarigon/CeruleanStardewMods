@@ -51,8 +51,6 @@
     "cfg.peek-into-chests.msg": "允许玩家窥探NPC摊位的储物箱。",
     "cfg.no-free-items": "No free items", // TODO
     "cfg.no-free-items.msg": "Disable stocking shops with items which have no price", // TODO
-    "cfg.dont-log-shop-positions": "Don't log shop positions'", // TODO
-    "cfg.dont-log-shop-positions.msg": "Disable extra verbose logging of shop position checks", // TODO
     "cfg.ruin-furniture": "破坏摊位",
     "cfg.ruin-furniture.msg": "允许玩家敲掉摊位的告示牌和箱子。",
     "cfg.hide-furniture": "隐藏箱子",
