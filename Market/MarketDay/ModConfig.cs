@@ -39,6 +39,7 @@ namespace MarketDay
         public bool ReceiveMessages { get; set; } = true;
         public bool PeekIntoChests { get; set; }
         public bool NoFreeItems { get; set; } = true;
+        public bool DontLogShopPositions { get; set; } = true;
         public bool RuinTheFurniture { get; set; }
         public Dictionary<string, bool> ShopsEnabled = new();
         public bool VerboseLogging { get; set; }

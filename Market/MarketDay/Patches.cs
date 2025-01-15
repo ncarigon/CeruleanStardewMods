@@ -104,8 +104,11 @@ namespace MarketDay
     {
         public static bool Prefix(Object __instance, ref bool __result)
         {
+            if (__instance?.Location?.Name?.Equals("Town") == false) return true;
+
             var owner = MapUtility.Owner(__instance);
-            MarketDay.Log(
+
+            if (!MarketDay.Config.DontLogShopPositions) MarketDay.Log(
                 $"Prefix_Object_performToolAction checking {__instance} {__instance.DisplayName} owner {owner} at {__instance.TileLocation}",
                 LogLevel.Debug, true);
 

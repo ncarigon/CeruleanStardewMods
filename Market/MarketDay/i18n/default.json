@@ -97,6 +97,8 @@
   "cfg.peek-into-chests.msg": "Allow player to look inside NPC shop chests",
   "cfg.no-free-items": "No free items",
   "cfg.no-free-items.msg": "Disable stocking shops with items which have no price",
+  "cfg.dont-log-shop-positions": "Don't log shop positions'",
+  "cfg.dont-log-shop-positions.msg": "Disable extra verbose logging of shop position checks",
   "cfg.ruin-furniture": "Ruin the furniture",
   "cfg.ruin-furniture.msg": "Allow player to break shop chests and signs",
   "cfg.hide-furniture": "Hide furniture",
