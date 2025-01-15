@@ -24,8 +24,8 @@
     "cfg.main-settings": "常规",
     "cfg.challenge-mode": "挑战模式",
     "cfg.challenge-mode.msg": "发展壮大集市；解锁更丰厚的奖金。",
-    "cfg.shared-shop": "共享模式",
-    "cfg.shared-shop.msg": "所有玩家都使用同一个商店。",
+    "cfg.shared-shop": "Shared Shop Mode", // TODO
+    "cfg.shared-shop.msg": "In this mode, the host and farmhands all manage a single shop.", // TODO
     "cfg.opening-time": "开张时间",
     "cfg.opening-time.msg": "开张时间",
     "cfg.closing-time": "打烊时间",
@@ -49,6 +49,8 @@
     "cfg.debug-settings": "调试",
     "cfg.peek-into-chests": "窥视箱子",
     "cfg.peek-into-chests.msg": "允许玩家窥探NPC摊位的储物箱。",
+    "cfg.no-free-items": "No free items", // TODO
+    "cfg.no-free-items.msg": "Disable stocking shops with items which have no price", // TODO
     "cfg.ruin-furniture": "破坏摊位",
     "cfg.ruin-furniture.msg": "允许玩家敲掉摊位的告示牌和箱子。",
     "cfg.hide-furniture": "隐藏箱子",

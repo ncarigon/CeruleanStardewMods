@@ -1365,6 +1365,13 @@ namespace MarketDay
             );
 
             configMenu.AddBoolOption(ModManifest,
+                () => Config.NoFreeItems,
+                val => Config.NoFreeItems = val,
+                () => Helper.Translation.Get("cfg.no-free-items"),
+                () => Helper.Translation.Get("cfg.no-free-items.msg")
+            );
+
+            configMenu.AddBoolOption(ModManifest,
                 () => Config.RuinTheFurniture,
                 val => Config.RuinTheFurniture = val,
                 () => Helper.Translation.Get("cfg.ruin-furniture"),

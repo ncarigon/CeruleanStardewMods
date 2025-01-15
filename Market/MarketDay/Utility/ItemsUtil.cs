@@ -48,7 +48,7 @@ namespace MarketDay.Utility
             switch (a)
             {
                 case Hat aHat when b is Hat bHat:
-                    return aHat.obsolete_which.Value == bHat.obsolete_which.Value;
+                    return aHat.ItemId == bHat.ItemId;
                 case Tool aTool when b is Tool bTool:  // includes weapons
                     return aTool.InitialParentTileIndex == bTool.InitialParentTileIndex;
                 case Boots aBoots when b is Boots bBoots:

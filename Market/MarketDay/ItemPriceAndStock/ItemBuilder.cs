@@ -105,6 +105,14 @@ namespace MarketDay.ItemPriceAndStock
             }
 
             var priceStockCurrency = GetPriceStockAndCurrency(item, priceMultiplier);
+            if (priceStockCurrency.Price < 1) {
+                if (MarketDay.Config.NoFreeItems) {
+                    MarketDay.Log($"{item.Name} does not have a valid price and will not be stocked.", LogLevel.Warn);
+                    return false;
+                } else {
+                    MarketDay.Log($"{item.Name} does not have a valid price and will be free.", LogLevel.Warn);
+                }
+            }
             _itemPriceAndStock.Add(item, priceStockCurrency);
 
             return true;

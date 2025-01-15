@@ -95,6 +95,8 @@
   "cfg.debug-settings": "Debug settings",
   "cfg.peek-into-chests": "Peek into chests",
   "cfg.peek-into-chests.msg": "Allow player to look inside NPC shop chests",
+  "cfg.no-free-items": "No free items",
+  "cfg.no-free-items.msg": "Disable stocking shops with items which have no price",
   "cfg.ruin-furniture": "Ruin the furniture",
   "cfg.ruin-furniture.msg": "Allow player to break shop chests and signs",
   "cfg.hide-furniture": "Hide furniture",

@@ -382,20 +382,18 @@ namespace MarketDay.Shop
             //     playOpenSound: true
             // );
             //public ShopMenu(string shopId, List<ISalable> itemsForSale, int currency = 0, string who = null, Func<ISalable, Farmer, int, bool> on_purchase = null, Func<ISalable, bool> on_sell = null, bool playOpenSound = true)
-            List<ISalable> salables = new List<ISalable>();
-            foreach (var item in ShopStock())
-            {
-                salables.Add(item.Key);
-            }
             var shopMenu = new ShopMenu(
                 shopId: "MarketDayGrangeShop_"+ ShopName,
-                itemsForSale: salables,
+                itemsForSale: new List<ISalable>(),
                 currency: currency,
                 who: null,
                 on_purchase: OnPurchase,
                 on_sell: null,
                 playOpenSound: true
             );
+            foreach (var item in ShopStock()) {
+                shopMenu.AddForSale(item.Key, item.Value);
+            }
 
             if (CategoriesToSellHere != null)
                 shopMenu.categoriesToSellHere = CategoriesToSellHere;

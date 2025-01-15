@@ -49,7 +49,7 @@ namespace MarketDay.ItemPriceAndStock
             CurrencyObjectId = ItemsUtil.GetIndexByName(StockItemCurrency);
 
             //sets price to the store price if no stock price is given
-            if (StockPrice == -1)
+            if (StockPrice < 1)
             {
                 StockPrice = price;
             }

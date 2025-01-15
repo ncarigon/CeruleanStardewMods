@@ -38,6 +38,7 @@ namespace MarketDay
         public float StallVisitChance { get; set; } = 0.9f;
         public bool ReceiveMessages { get; set; } = true;
         public bool PeekIntoChests { get; set; }
+        public bool NoFreeItems { get; set; } = true;
         public bool RuinTheFurniture { get; set; }
         public Dictionary<string, bool> ShopsEnabled = new();
         public bool VerboseLogging { get; set; }
