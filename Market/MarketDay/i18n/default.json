@@ -111,6 +111,8 @@
   "cfg.hide-furniture.msg": "Hide player shop chest somewhere actually inaccessible between market days",
   "cfg.verbose-logging": "Verbose logging",
   "cfg.verbose-logging.msg": "Generate extra log messages for debugging",
+  "cfg.multiplayer-messages": "Show Multiplayer Messages",
+  "cfg.multiplayer-messages.msg": "Display chat messages when a farmhand joins or disconnects",
   "cfg.shop-positions": "Show shop positions",
   "cfg.shop-positions.msg": "Show Content Patcher position token values on shop signs",
   "cfg.debug-keybinds": "Debug keybinds",

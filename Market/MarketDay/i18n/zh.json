@@ -65,6 +65,8 @@
     "cfg.hide-furniture.msg": "隐藏摊位箱子至无法触及的地方。",
     "cfg.verbose-logging": "详细日志",
     "cfg.verbose-logging.msg": "详细日志",
+    "cfg.multiplayer-messages": "Show Multiplayer Messages", // TODO
+    "cfg.multiplayer-messages.msg": "Display chat messages when a farmhand joins or disconnects", // TODO
     "cfg.debug-keybinds": "调试键位",
     "cfg.debug-keybinds.msg": "启用调试键位可能与其他mod冲突。",
     "cfg.npc-visitors": "NPC访客寻路",

@@ -590,12 +590,14 @@ namespace MarketDay
             Log($"OnPeerConnected_ReloadMarket: invalidating Maps/Town", LogLevel.Info, false);
             helper.GameContent.InvalidateCache("Maps/Town");
             
-            var newFarmer = Game1.GetPlayer(e.Peer.PlayerID, true) ?? Game1.MasterPlayer;
-            var r = Game1.random.Next(5);
-            var multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
-            var globalChatInfoMessage = helper.Reflection.GetMethod(multiplayer, "globalChatInfoMessage");
-            globalChatInfoMessage.Invoke($"11778_connected_{r}", new[]{newFarmer.Name} );
-            Log($"OnPeerConnected_ReloadMarket: globalChatInfoMessage 11778_connected_{r}", LogLevel.Debug, false);
+            if (MarketDay.Config.ShowMultiplayerMessages) {
+                var newFarmer = Game1.GetPlayer(e.Peer.PlayerID, true) ?? Game1.MasterPlayer;
+                var r = Game1.random.Next(5);
+                var multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
+                var globalChatInfoMessage = helper.Reflection.GetMethod(multiplayer, "globalChatInfoMessage");
+                globalChatInfoMessage.Invoke($"11778_connected_{r}", new[] { newFarmer.Name });
+                Log($"OnPeerConnected_ReloadMarket: globalChatInfoMessage 11778_connected_{r}", LogLevel.Debug, false);
+            }
         }
         
         private static void OnPeerDisonnected_ReloadMarket(object sender, PeerDisconnectedEventArgs e)
@@ -608,13 +610,15 @@ namespace MarketDay
             Log($"OnPeerDisonnected_ReloadMarket: invalidating Maps/Town", LogLevel.Info, false);
             helper.GameContent.InvalidateCache("Maps/Town");
 
-            var newFarmer = Game1.GetPlayer(e.Peer.PlayerID, true) ?? Game1.MasterPlayer;
-            if (newFarmer is null) return;
-            var r = Game1.random.Next(5);
-            var multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
-            var globalChatInfoMessage = helper.Reflection.GetMethod(multiplayer, "globalChatInfoMessage");
-            globalChatInfoMessage.Invoke($"11778_disconnected_{r}", new[]{newFarmer.Name} );
-            Log($"OnPeerDisonnected_ReloadMarket: globalChatInfoMessage 11778_disconnected_{r}", LogLevel.Debug, false);
+            if (MarketDay.Config.ShowMultiplayerMessages) {
+                var newFarmer = Game1.GetPlayer(e.Peer.PlayerID, true) ?? Game1.MasterPlayer;
+                if (newFarmer is null) return;
+                var r = Game1.random.Next(5);
+                var multiplayer = helper.Reflection.GetField<Multiplayer>(typeof(Game1), "multiplayer").GetValue();
+                var globalChatInfoMessage = helper.Reflection.GetMethod(multiplayer, "globalChatInfoMessage");
+                globalChatInfoMessage.Invoke($"11778_disconnected_{r}", new[] { newFarmer.Name });
+                Log($"OnPeerDisonnected_ReloadMarket: globalChatInfoMessage 11778_disconnected_{r}", LogLevel.Debug, false);
+            }
         }
         
         private static void OnDayStarted_FlagSyncNeeded(object sender, EventArgs e)
@@ -1413,7 +1417,14 @@ namespace MarketDay
                 () => Helper.Translation.Get("cfg.verbose-logging"),
                 () => Helper.Translation.Get("cfg.verbose-logging.msg")
             );
-            
+
+            configMenu.AddBoolOption(ModManifest,
+                () => Config.ShowMultiplayerMessages,
+                val => Config.ShowMultiplayerMessages = val,
+                () => Helper.Translation.Get("cfg.multiplayer-messages"),
+                () => Helper.Translation.Get("cfg.multiplayer-messages.msg")
+            );
+
             configMenu.AddBoolOption(ModManifest,
                 () => Config.ShowShopPositions,
                 val => Config.ShowShopPositions = val,

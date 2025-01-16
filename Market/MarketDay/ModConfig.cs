@@ -42,6 +42,7 @@ namespace MarketDay
         public bool RuinTheFurniture { get; set; }
         public Dictionary<string, bool> ShopsEnabled = new();
         public bool VerboseLogging { get; set; }
+        public bool ShowMultiplayerMessages { get; set; } = true;
         public bool ShowShopPositions { get; set; }
         public bool NPCVisitors { get; set; } = true;
         public bool NPCOwnerRescheduling { get; set; } = true;
