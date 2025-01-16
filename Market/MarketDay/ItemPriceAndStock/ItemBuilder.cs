@@ -156,6 +156,20 @@ namespace MarketDay.ItemPriceAndStock
             return !itemData.IsErrorItem;
         }
 
+        private static bool TryGetShopPrice(ItemStock _itemStock, string qId, out int price) {
+            var curr = _itemStock.CurrencyObjectId == "-1" ? "0" : _itemStock.CurrencyObjectId;
+            price = DataLoader.Shops(Game1.content) // check all shops
+                .Where(s => s.Value?.Currency.ToString()?.Equals(curr) == true) // must use same currency
+                .SelectMany(s => s.Value.Items // check all items
+                    .Where(i => string.IsNullOrEmpty(i?.TradeItemId) || i?.TradeItemId?.Equals(curr) == true) // uses the same currency
+                    .Where(i => TryGetShopItemData(i?.ItemId, out var shopItem) // shop item exists
+                        && shopItem?.QualifiedItemId?.Equals(qId) == true) // must be same item
+                ).OrderByDescending(i => i.Price) // most expensive first
+                .Select(i => i.Price) // we only need the price
+                .FirstOrDefault(); // most expensive only
+            return price > 0;
+        }
+
         /// <summary>
         /// Creates the second parameter in ItemStockAndPrice, an array that holds info on the price, stock,
         /// and if it exists, the item currency it takes
@@ -168,20 +182,24 @@ namespace MarketDay.ItemPriceAndStock
             ItemStockInformation priceStockCurrency;
             var price = _itemStock.StockPrice;
             if (price < 1) {
-                //if no price, try another shop's prices
-                var curr = _itemStock.CurrencyObjectId == "-1" ? "0" : _itemStock.CurrencyObjectId;
-                price = DataLoader.Shops(Game1.content) // check all shops
-                    .Where(s => s.Value?.Currency.ToString()?.Equals(curr) == true) // must use same currency
-                    .SelectMany(s => s.Value.Items // check all items
-                        .Where(i => string.IsNullOrEmpty(i?.TradeItemId) || i?.TradeItemId?.Equals(curr) == true) // uses the same currency
-                        .Where(i => TryGetShopItemData(i?.ItemId, out var shopItem) // shop item exists
-                            && shopItem?.QualifiedItemId?.Equals(item.QualifiedItemId) == true) // must be same item
-                    ).OrderByDescending(i => i.Price) // most expensive first
-                    .Select(i => i.Price) // we only need the price
-                    .FirstOrDefault(); // most expensive only
-                if (price < 1) {
-                    //if still no price is provided, use the item's sale price
-                    price = item.salePrice();
+                //if no price, try another method
+                switch (_itemStock.SellPriceMode) {
+                    case 1: // sale price, then shop price; prone to errors with non-valued items
+                        if ((price = item.salePrice()) < 1) {
+                            TryGetShopPrice(_itemStock, item.QualifiedItemId, out price);
+                        }
+                        break;
+                    case 2: // only shop price; prone to errors with items that aren't sold elsewhere
+                        TryGetShopPrice(_itemStock, item.QualifiedItemId, out price);
+                        break;
+                    case 3: // only sale price; matches legacy mode
+                        price = item.salePrice();
+                        break;
+                    default: // shop price, then sale price; less error prone
+                        if (!TryGetShopPrice(_itemStock, item.QualifiedItemId, out price)) {
+                            price = item.salePrice();
+                        }
+                        break;
                 }
                 // multiplied by defaultSellPriceMultiplier
                 price = (int)(price * _itemStock.DefaultSellPriceMultiplier);

@@ -7,6 +7,7 @@ namespace MarketDay.Data
         public bool IsRecipe { get; set; } = false;
         public int StockPrice { get; set; } = -1;
         public double SellPriceMultiplier { get; set; } = -1;
+        public int SellPriceMode { get; set; }
         public string StockItemCurrency { get; set; } = "Money";
         public int StockCurrencyStack { get; set; } = 1;
         public int Quality { get; set; } = 0;
