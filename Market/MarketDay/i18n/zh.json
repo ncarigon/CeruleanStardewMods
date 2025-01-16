@@ -21,6 +21,12 @@
     "not-your-shop": "这是{{Owner}}的小店。",
     "market-day": "今天是集市日！请于{{openingTime}}之前到镇上布置摊位。",
     "market-day-progression": "今天是集市日！你的目标是赚{{ProfitTarget}}金。",
+    "market-day-off-cancelled": "cancelled", // TODO
+    "market-day-off-rescheduled": "rescheduled", // TODO
+    "market-day-off-festival": "festival", // TODO
+    "market-day-off-raining": "raining", // TODO
+    "market-day-off-snowing": "snowing", // TODO
+    "market-day-off-msg": "Market day has been {{action}} due to today's {{reason}}.", // TODO
     "cfg.main-settings": "常规",
     "cfg.challenge-mode": "挑战模式",
     "cfg.challenge-mode.msg": "发展壮大集市；解锁更丰厚的奖金。",
@@ -32,6 +38,8 @@
     "cfg.closing-time.msg": "打烊时间",
     "cfg.day-of-week": "星期几集市",
     "cfg.day-of-week.msg": "集市在星期几开放（0是星期日，6是星期六）",
+    "cfg.next-day-cancelled": "Reschedule next day", // TODO
+    "cfg.next-day-cancelled.msg": "If market day is cancelled, reschedule for the next day.", // TODO
     "cfg.shop-layout": "摊位数",
     "cfg.shop-layout.msg": "集市上有多少摊位",
     "cfg.gmm-compat": "Leave space for GMM", // TODO

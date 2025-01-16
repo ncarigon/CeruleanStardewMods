@@ -54,13 +54,7 @@ namespace MarketDay.Utility
                 case Boots aBoots when b is Boots bBoots:
                     return aBoots.indexInTileSheet == bBoots.indexInTileSheet;
                 case Item aItem when b is Item bItem:
-                {
-                    if (aItem.ParentSheetIndex > -1 && bItem.ParentSheetIndex > -1)
-                    {
-                        return aItem.ParentSheetIndex == bItem.ParentSheetIndex && aItem.Category == bItem.Category;
-                    }
-                    break;
-                }
+                    return aItem.QualifiedItemId.Equals(bItem.QualifiedItemId);
             }
 
             if (a is not Item) MarketDay.Log($"Equal: {a.Name} not an item", LogLevel.Warn);

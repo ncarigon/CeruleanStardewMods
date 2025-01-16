@@ -6,6 +6,8 @@ using StardewValley.Tools;
 using System.Collections.Generic;
 using MarketDay.Utility;
 using System.Linq;
+using System;
+using StardewValley.ItemTypeDefinitions;
 
 namespace MarketDay.ItemPriceAndStock
 {
@@ -149,6 +151,11 @@ namespace MarketDay.ItemPriceAndStock
             }
         }
 
+        private static bool TryGetShopItemData(string? itemId, out ParsedItemData? itemData) {
+            itemData = ItemRegistry.GetDataOrErrorItem(itemId);
+            return !itemData.IsErrorItem;
+        }
+
         /// <summary>
         /// Creates the second parameter in ItemStockAndPrice, an array that holds info on the price, stock,
         /// and if it exists, the item currency it takes
@@ -159,8 +166,26 @@ namespace MarketDay.ItemPriceAndStock
         private ItemStockInformation GetPriceStockAndCurrency(ISalable item, double priceMultiplier)
         {
             ItemStockInformation priceStockCurrency;
-            //if no price is provided, use the item's sale price multiplied by defaultSellPriceMultiplier
-            var price = (_itemStock.StockPrice == -1) ? (int)(item.salePrice()* _itemStock.DefaultSellPriceMultiplier) : _itemStock.StockPrice;
+            var price = _itemStock.StockPrice;
+            if (price < 1) {
+                //if no price, try another shop's prices
+                var curr = _itemStock.CurrencyObjectId == "-1" ? "0" : _itemStock.CurrencyObjectId;
+                price = DataLoader.Shops(Game1.content) // check all shops
+                    .Where(s => s.Value?.Currency.ToString()?.Equals(curr) == true) // must use same currency
+                    .SelectMany(s => s.Value.Items // check all items
+                        .Where(i => string.IsNullOrEmpty(i?.TradeItemId) || i?.TradeItemId?.Equals(curr) == true) // uses the same currency
+                        .Where(i => TryGetShopItemData(i?.ItemId, out var shopItem) // shop item exists
+                            && shopItem?.QualifiedItemId?.Equals(item.QualifiedItemId) == true) // must be same item
+                    ).OrderByDescending(i => i.Price) // most expensive first
+                    .Select(i => i.Price) // we only need the price
+                    .FirstOrDefault(); // most expensive only
+                if (price < 1) {
+                    //if still no price is provided, use the item's sale price
+                    price = item.salePrice();
+                }
+                // multiplied by defaultSellPriceMultiplier
+                price = (int)(price * _itemStock.DefaultSellPriceMultiplier);
+            }
             price = (int)(price*priceMultiplier);
 
             if (_itemStock.CurrencyObjectId == "-1") // no currency item

@@ -37,7 +37,7 @@ namespace MarketDay.ItemPriceAndStock
         internal void Initialize(string shopName, int price, double defaultSellPriceMultiplier, Dictionary<double, string[]> priceMultiplierWhen)
         {
             ShopName = shopName;
-            DefaultSellPriceMultiplier = defaultSellPriceMultiplier;
+            DefaultSellPriceMultiplier = SellPriceMultiplier <= 0 ? defaultSellPriceMultiplier : SellPriceMultiplier;
             PriceMultiplierWhen = priceMultiplierWhen;
 
             if (Quality is < 0 or 3 or > 4)

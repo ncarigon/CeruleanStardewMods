@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Force.DeepCloner;
 using MarketDay.Utility;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -384,16 +385,13 @@ namespace MarketDay.Shop
             //public ShopMenu(string shopId, List<ISalable> itemsForSale, int currency = 0, string who = null, Func<ISalable, Farmer, int, bool> on_purchase = null, Func<ISalable, bool> on_sell = null, bool playOpenSound = true)
             var shopMenu = new ShopMenu(
                 shopId: "MarketDayGrangeShop_"+ ShopName,
-                itemsForSale: new List<ISalable>(),
+                itemPriceAndStock: ShopStock(),
                 currency: currency,
                 who: null,
                 on_purchase: OnPurchase,
                 on_sell: null,
                 playOpenSound: true
             );
-            foreach (var item in ShopStock()) {
-                shopMenu.AddForSale(item.Key, item.Value);
-            }
 
             if (CategoriesToSellHere != null)
                 shopMenu.categoriesToSellHere = CategoriesToSellHere;
@@ -479,14 +477,12 @@ namespace MarketDay.Shop
             {
                 if (stockItem is null) continue;
 
-                // var price = getSellPriceFromShopStock(stockItem);
-
-                var price = getSellPriceArrayFromShopStock(stockItem);
+                var price = getSellPriceArrayFromShopStock(stockItem).DeepClone(); // TODO - is there a better way to handle this entire thing?
+                price.Stock = 1;
 
                 var sellItem = stockItem.getOne();
                 sellItem.Stack = 1;
                 if (sellItem is Object sellObj && stockItem is Object stockObj) sellObj.Quality = stockObj.Quality;
-
                 stock[sellItem] = price;
             }
 
@@ -1158,6 +1154,7 @@ namespace MarketDay.Shop
                 MarketDay.Log("StockChestForTheDay: StockChest is null", LogLevel.Error);
                 return;
             }
+            StockChest.Items.Clear();
             foreach (var (Salable, priceAndStock) in StockManager.ItemPriceAndStock)
             {
                 Log($"    Stock item {Salable.DisplayName} price {priceAndStock.Price} stock {priceAndStock.Stock}",

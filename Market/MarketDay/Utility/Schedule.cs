@@ -1080,15 +1080,14 @@ namespace MarketDay.Utility
 
         public static bool ExcludedFromIslandEvents(NPC npc)
         {
-            try
-            { // wrapping in try-catch due to occasional asset load errors when CustomNPCExclusions is not loaded
+            // only load asset if mod is loaded since it will *sometimes* throw errors otherwise
+            if (MarketDay.helper.ModRegistry.IsLoaded("Esca.CustomNPCExclusions"))
+            {
                 var exclusions = MarketDay.helper.GameContent.Load<Dictionary<string, string>>(@"Data/CustomNPCExclusions");
                 if (exclusions.TryGetValue(npc.Name, out var exclusion))
                 {
                     return exclusion.Contains("IslandVisit") || exclusion.Contains("IslandEvent");
                 }
-            } catch {
-                MarketDay.Log($"Failed to read CustomNPCExclusions data.", LogLevel.Warn);
             }
             return false;
         }

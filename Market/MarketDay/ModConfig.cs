@@ -9,7 +9,7 @@ namespace MarketDay
 
         public bool SharedShop { get; set; } = true;
         
-        public bool OnNextDayIfFestival { get; set; } = true;
+        public bool OnNextDayIfCancelled { get; set; } = true;
 
         public int DayOfWeek { get; set; } = 6;
         public bool UseAdvancedOpeningOptions { get; set; }
