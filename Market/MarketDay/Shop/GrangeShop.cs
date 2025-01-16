@@ -65,7 +65,7 @@ namespace MarketDay.Shop
         // state queries
 
         public bool IsPlayerShop => PlayerID == Game1.player.uniqueMultiplayerID.Value
-                    || (MarketDay.Config.SharedShop && PlayerID == Game1.MasterPlayer.uniqueMultiplayerID.Value);
+                    || (MarketDay.Config.GetSharedShop() && PlayerID == Game1.MasterPlayer.uniqueMultiplayerID.Value);
 
         public string? Owner()
         {
@@ -181,7 +181,7 @@ namespace MarketDay.Shop
             var dayProfit = GetSharedValue(GoldTodayKey);
             var mailKey = $"md_prize_{Owner()}_{Game1.currentSeason}_{Game1.dayOfMonth}_Y{Game1.year}";
             string text;
-            if (MarketDay.Config.Progression)
+            if (MarketDay.Config.GetProgression())
             {
                 var prize = MarketDay.Progression.CurrentLevel.PrizeForEarnings(dayProfit);
                 if (prize is not null)
@@ -319,7 +319,7 @@ namespace MarketDay.Shop
 
             if (IsPlayerShop)
             {
-                if (!MarketDay.Config.SharedShop && PlayerID != Game1.player.UniqueMultiplayerID)
+                if (!MarketDay.Config.GetSharedShop() && PlayerID != Game1.player.UniqueMultiplayerID)
                 {
                     var Owner = ShopName.Replace("Farmer:", "");
                     Game1.activeClickableMenu = new DialogueBox(Get("not-your-shop", new {Owner}));
@@ -444,6 +444,9 @@ namespace MarketDay.Shop
 
         private ItemStockInformation getSellPriceArrayFromShopStock(Item item)
         {
+            if (StockManager?.ItemPriceAndStock is null) {
+                StockManager?.Update();
+            }
             if (StockManager?.ItemPriceAndStock is null)
             {
                 MarketDay.Log($"getSellPriceArrayFromShopStock: no Stockmanager or no StockManager.ItemPriceAndStock", LogLevel.Warn);
@@ -694,7 +697,7 @@ namespace MarketDay.Shop
             var LevelStrapline = "";
             var WeeklyGoalProgress = "";
             var LevelGoalProgress = "";
-            if (MarketDay.Config.Progression)
+            if (MarketDay.Config.GetProgression())
             {
                 LevelStrapline = Get("level-strapline", new {LevelStrapline = MarketDay.Progression.CurrentLevel.Name});
                 var weeklyProgress = (int) (GetSharedValue(GoldTodayKey) * 100.0 /
@@ -827,7 +830,7 @@ namespace MarketDay.Shop
             else if (OwnerCharacter is Farmer farmer)
             {
                 if (farmer?.getSpouse()?.currentLocation?.Name == "Town") mult += 0.2;
-                if (MarketDay.Config.SharedShop && Game1.getAllFarmers().Any(f => f?.currentLocation?.Name == "Town")) mult += 0.2;
+                if (MarketDay.Config.GetSharedShop() && Game1.getAllFarmers().Any(f => f?.currentLocation?.Name == "Town")) mult += 0.2;
             }
 
             return mult;

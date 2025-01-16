@@ -30,7 +30,7 @@ namespace MarketDay
                 LogLevel.Debug, true);
 
             if (owner is null) return true;
-            if (owner == $"Farmer:{who.Name}" || (MarketDay.Config.SharedShop && owner == $"Farmer:{Game1.MasterPlayer.Name}") || MarketDay.Config.PeekIntoChests) return true;
+            if (owner == $"Farmer:{who.Name}" || (MarketDay.Config.GetSharedShop() && owner == $"Farmer:{Game1.MasterPlayer.Name}") || MarketDay.Config.PeekIntoChests) return true;
 
             MarketDay.Log(
                 $"Prefix_Chest_checkForAction preventing action on object at {__instance.TileLocation} owned by {owner}",
@@ -56,7 +56,7 @@ namespace MarketDay
                 $"Prefix_Sign_checkForAction checking {__instance} {__instance.DisplayName} owner {owner} at {__instance.TileLocation}",
                 LogLevel.Debug, true);
 
-            if (owner is null || owner == $"Farmer:{who.Name}" || (MarketDay.Config.SharedShop && owner == $"Farmer:{Game1.MasterPlayer.Name}")) return true;
+            if (owner is null || owner == $"Farmer:{who.Name}" || (MarketDay.Config.GetSharedShop() && owner == $"Farmer:{Game1.MasterPlayer.Name}")) return true;
 
             MarketDay.Log(
                 $"Prefix_Sign_checkForAction preventing action on object at {__instance.TileLocation} owned by {owner}",
@@ -83,7 +83,7 @@ namespace MarketDay
                 LogLevel.Debug, true);
 
             if (owner is null) return true;
-            if (owner == $"Farmer:{Game1.player.Name}" || (MarketDay.Config.SharedShop && owner == $"Farmer:{Game1.MasterPlayer.Name}") || MarketDay.Config.PeekIntoChests) return true;
+            if (owner == $"Farmer:{Game1.player.Name}" || (MarketDay.Config.GetSharedShop() && owner == $"Farmer:{Game1.MasterPlayer.Name}") || MarketDay.Config.PeekIntoChests) return true;
 
             MarketDay.Log(
                 $"Prefix_Object_performUseAction preventing use of object at {__instance.TileLocation} owned by {owner}",
@@ -112,7 +112,7 @@ namespace MarketDay
                 $"Prefix_Object_performToolAction checking {__instance} {__instance.DisplayName} owner {owner} at {__instance.TileLocation}",
                 LogLevel.Debug, true);
 
-            if (MarketDay.Config.RuinTheFurniture) return true;
+            if (MarketDay.Config.GetRuinTheFurniture()) return true;
             if (owner is null) return true;
 
             MarketDay.Log(

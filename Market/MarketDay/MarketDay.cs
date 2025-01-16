@@ -123,7 +123,7 @@ namespace MarketDay
         
         private static void MakePlayerShops()
         {
-            var farmers = MarketDay.Config.SharedShop
+            var farmers = MarketDay.Config.GetSharedShop()
                 ? new List<Farmer>() { Game1.MasterPlayer }
                 : Game1.getAllFarmers().Where(f => f.isActive()).ToList();
             var multiplayer = farmers.Count > 1;
@@ -213,7 +213,7 @@ namespace MarketDay
                 state.Add($"Weather  Rain: {Game1.isRaining}  Snow: {Game1.isSnowing}  Festival: {festival}");
                 state.Add($"Market Day: {IsMarketDay}");
                 state.Add($"GMM Compat  Enabled: {Config.GMMCompat}  GMM Day: {isGMMDay()}  Joseph: {GMMJosephPresent}  Paisley: {GMMPaisleyPresent}");
-                if (Config.Progression)
+                if (Config.GetProgression())
                 {
                     state.Add($"Progression:  Enabled  Shops: {Progression.NumberOfShops}  Weekly Target: {Progression.WeeklyGoldTarget}");   
                     state.Add($"    AutoRestock: {Progression.AutoRestock}  ShopSize: {Progression.ShopSize}  PriceMultiplierLimit: {Progression.SellPriceMultiplierLimit}");
@@ -526,7 +526,7 @@ namespace MarketDay
                 openingTime = openingTime[..^2] + ":" + openingTime[^2..];
 
                 var ProfitTarget = StardewValley.Utility.getNumberWithCommas(Progression.WeeklyGoldTarget);
-                prompt = Config.Progression
+                prompt = Config.GetProgression()
                     ? Get("market-day-progression", new { ProfitTarget })
                     : Get("market-day", new { openingTime });
             }
@@ -1113,7 +1113,7 @@ namespace MarketDay
             configMenu.Register(ModManifest, () => Config = new ModConfig(), SaveConfig);
             configMenu.OnFieldChanged(ModManifest, GMCMFieldChanged);
 
-            configMenu.SetTitleScreenOnlyForNextOptions(ModManifest, true);
+            configMenu.SetTitleScreenOnlyForNextOptions(ModManifest, false);
 
             configMenu.AddSectionTitle(ModManifest,
                 () => Helper.Translation.Get("cfg.game-mode"));
@@ -1121,22 +1121,20 @@ namespace MarketDay
                 () => Helper.Translation.Get("cfg.challenge-mode.msg"));
             
             configMenu.AddBoolOption(ModManifest,
-                () => Config.Progression,
-                val => Config.Progression = val,
+                () => Config.GetProgression(),
+                val => Config.SetProgression(val),
                 () => Helper.Translation.Get("cfg.challenge-mode"),
                 () => Helper.Translation.Get("cfg.challenge-mode.msg"),
                 fieldId: "fm_ChallengeMode"
             );
 
             configMenu.AddBoolOption(ModManifest,
-                () => Config.SharedShop,
-                val => Config.SharedShop = val,
+                () => Config.GetSharedShop(),
+                val => Config.SetSharedShop(val),
                 () => Helper.Translation.Get("cfg.shared-shop"),
                 () => Helper.Translation.Get("cfg.shared-shop.msg"),
                 fieldId: "fm_SharedShop"
             );
-
-            configMenu.SetTitleScreenOnlyForNextOptions(ModManifest, false);
 
             configMenu.AddSectionTitle(ModManifest,
                 () => Helper.Translation.Get("cfg.open-close-options"));
@@ -1405,8 +1403,8 @@ namespace MarketDay
             );
 
             configMenu.AddBoolOption(ModManifest,
-                () => Config.RuinTheFurniture,
-                val => Config.RuinTheFurniture = val,
+                () => Config.GetRuinTheFurniture(),
+                val => Config.SetRuinTheFurniture(val),
                 () => Helper.Translation.Get("cfg.ruin-furniture"),
                 () => Helper.Translation.Get("cfg.ruin-furniture.msg")
             );

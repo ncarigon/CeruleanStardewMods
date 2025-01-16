@@ -12,7 +12,7 @@ namespace MarketDay.ItemPriceAndStock
     /// </summary>
     public class ItemPriceAndStockManager
     {
-        public Dictionary<ISalable, ItemStockInformation> ItemPriceAndStock { get; set; }
+        public Dictionary<ISalable, ItemStockInformation> ItemPriceAndStock { get; set; }        
         private readonly ItemStock[] _itemStocks;
         private readonly double _defaultSellPriceMultipler;
         private readonly Dictionary<double, string[]> _priceMultiplierWhen;
@@ -59,9 +59,10 @@ namespace MarketDay.ItemPriceAndStock
                 Add(priceAndStock);
             }
 
-            //randomly reduces the stock of the whole store down to maxNumItemsSoldInStore
-            ItemsUtil.RandomizeStock(ItemPriceAndStock,_maxNumItemsSoldInStore);
-
+            if (Game1.IsMasterGame) {
+                //randomly reduces the stock of the whole store down to maxNumItemsSoldInStore
+                ItemsUtil.RandomizeStock(ItemPriceAndStock, _maxNumItemsSoldInStore);
+            }
         }
 
         /// <summary>

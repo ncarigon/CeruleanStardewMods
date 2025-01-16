@@ -65,7 +65,7 @@ namespace MarketDay.Utility
 
             // set config accordingly
             if (p is Challenge.Rude or Challenge.NotAnswered) { return; }
-            MarketDay.Config.Progression = p != Challenge.No;
+            MarketDay.Config.SetProgression(p != Challenge.No);
 
             switch (d)
             {

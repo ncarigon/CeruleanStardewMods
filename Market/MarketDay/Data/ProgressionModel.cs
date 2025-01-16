@@ -70,14 +70,14 @@ namespace MarketDay.Data
 
         internal int AutoRestock =>
             Math.Max(0, 
-                MarketDay.Config.Progression 
+                MarketDay.Config.GetProgression() 
                 ? CurrentLevel.AutoRestock
                 : MarketDay.Config.RestockItemsPerHour
                 );
 
         internal int ShopSize =>
             Math.Max(1, Math.Min(9, 
-                MarketDay.Config.Progression 
+                MarketDay.Config.GetProgression()
                 ? CurrentLevel.ShopSize
                 : 9
                 ));
@@ -90,9 +90,9 @@ namespace MarketDay.Data
         {
             get
             {
-                var farmhands = MarketDay.Config.SharedShop ? 0 : Game1.getAllFarmers().Count(f => f.isActive()) - 1; 
+                var farmhands = MarketDay.Config.GetSharedShop() ? 0 : Game1.getAllFarmers().Count(f => f.isActive()) - 1; 
                 return Math.Max(1, Math.Min(15,
-                    MarketDay.Config.Progression
+                    MarketDay.Config.GetProgression()
                         ? CurrentLevel.NumberOfShops + farmhands
                         : MarketDay.Config.NumberOfShops
                 ));
@@ -101,21 +101,21 @@ namespace MarketDay.Data
 
         internal int NumberOfTownieVisitors =>
             Math.Max(1, Math.Min(100, 
-                MarketDay.Config.Progression 
+                MarketDay.Config.GetProgression()
                     ? CurrentLevel.NumberOfTownieVisitors
                     : MarketDay.Config.NumberOfTownieVisitors
             ));
 
         internal int NumberOfRandomVisitors =>
             Math.Max(1, Math.Min(24, 
-                MarketDay.Config.Progression 
+                MarketDay.Config.GetProgression()
                     ? CurrentLevel.NumberOfRandomVisitors
                     : MarketDay.Config.NumberOfRandomVisitors
             ));
         
         internal double SellPriceMultiplierLimit =>
             Math.Max(1, Math.Min(4, 
-                MarketDay.Config.Progression 
+                MarketDay.Config.GetProgression()
                 ? CurrentLevel.SellPriceMultiplierLimit
                 : 10
             ));

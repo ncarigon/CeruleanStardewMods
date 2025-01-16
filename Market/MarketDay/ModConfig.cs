@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using StardewModdingAPI;
+using StardewValley;
 
 namespace MarketDay
 {
@@ -56,5 +57,74 @@ namespace MarketDay
         public SButton WarpKeybind { get; set; } = SButton.Z;
         public SButton ReloadKeybind { get; set; } = SButton.R;
         public SButton StatusKeybind { get; set; } = SButton.Q;
+
+        public bool GetProgression() {
+            var val = Progression;
+            var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;
+            if (farm is null) return val;
+            string v;
+            if (Game1.IsMasterGame) {
+                if (farm.modData?.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/Config.Progression", out v) != true || val.ToString().ToLower() != v) {
+                    SetProgression(val);
+                }
+                return val;
+            }
+            return farm.modData?.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/Config.Progression", out v) == true && v == "true";
+        }
+
+        public void SetProgression(bool value) {
+            Progression = value;
+            var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;
+            if (farm is null) return;
+            if (Game1.IsMasterGame) {
+                Game1.getFarm().modData[$"{MarketDay.SMod.ModManifest.UniqueID}/Config.Progression"] = value.ToString().ToLower();
+            }
+        }
+
+        public bool GetSharedShop() {
+            var val = SharedShop;
+            var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;
+            if (farm is null) return val;
+            string v;
+            if (Game1.IsMasterGame) {
+                if (farm.modData?.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/Config.SharedShop", out v) != true || val.ToString().ToLower() != v) {
+                    SetSharedShop(val);
+                }
+                return val;
+            }
+            return farm.modData?.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/Config.SharedShop", out v) == true && v == "true";
+        }
+
+        public void SetSharedShop(bool value) {
+            SharedShop = value;
+            var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;
+            if (farm is null) return;
+            if (Game1.IsMasterGame) {
+                Game1.getFarm().modData[$"{MarketDay.SMod.ModManifest.UniqueID}/Config.SharedShop"] = value.ToString().ToLower();
+            }
+        }
+
+        public bool GetRuinTheFurniture() {
+            var val = RuinTheFurniture;
+            var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;
+            if (farm is null) return val;
+            string v;
+            if (Game1.IsMasterGame) {
+                if (farm.modData?.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/Config.RuinTheFurniture", out v) != true || val.ToString().ToLower() != v) {
+                    SetRuinTheFurniture(val);
+                }
+                return val;
+            }
+            return farm.modData?.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/Config.RuinTheFurniture", out v) == true && v == "true";
+        }
+
+        public void SetRuinTheFurniture(bool value) {
+            RuinTheFurniture = value;
+            var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;
+            if (farm is null) return;
+            if (Game1.IsMasterGame) {
+                Game1.getFarm().modData[$"{MarketDay.SMod.ModManifest.UniqueID}/Config.RuinTheFurniture"] = value.ToString().ToLower();
+            }
+        }
     }
 }
