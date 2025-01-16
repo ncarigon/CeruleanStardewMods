@@ -501,17 +501,16 @@ namespace MarketDay
 
         private static void OnDayStarted_SendPrompt(object sender, EventArgs e)
         {
-            Checks = new(); // reset
             Log($"OnDayStarted: {Game1.currentSeason} {Game1.dayOfMonth} {Game1.timeOfDay} {Game1.ticks}", LogLevel.Trace);
             string prompt = null;
             if (!IsMarketDay) {
                 string action = null;
-                string reason = Game1.getFarm()?.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"];
+                string reason = CancellationChecks.Reason;
                 switch (reason) {
                     case "festival":
                     case "raining":
                     case "snowing":
-                        action = Checks.Rescheduled == (GetAbsoluteDay() - 1).ToString() ? Get($"market-day-off-rescheduled") : Get($"market-day-off-cancelled");
+                        action = CancellationChecks.Rescheduled ? Get($"market-day-off-rescheduled") : Get($"market-day-off-cancelled");
                         reason = Get($"market-day-off-{reason}");
                         break;
                     default:
@@ -1463,15 +1462,33 @@ namespace MarketDay
             helper.WriteConfig(Config);
         }
 
-        internal struct CancellationChecks {
-            public bool CheckedToday;
-            public string Rescheduled;
-            public bool WrongDay, Festival, Raining, Snowing, Other;
+        internal static class CancellationChecks {
+            private static readonly string[] Reasons = new[] { "true", "festival", "raining", "snowing" };
 
-            public bool IsCancelled() => this.WrongDay || this.Festival || this.Raining  || this.Snowing  || this.Other;
+            public static bool CheckedToday {
+                get => Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/Checked", out var today) == true
+                        && string.Compare(today, GetAbsoluteDay().ToString()) == 0;
+                set => Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/Checked"] = value ? GetAbsoluteDay().ToString() : "-1";
+            }
+
+            public static bool Rescheduled {
+                // it was rescheduled if date matches yesterday
+                get => Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/Rescheduled", out var rescheduled) == true
+                        && int.TryParse(rescheduled, out var i) && i == GetAbsoluteDay() - 1;
+                // we reschedule by setting date to today, to be checked tomorrow
+                set => Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/Rescheduled"] = value ? GetAbsoluteDay().ToString() : "-1";
+            }
+
+            public static string Reason {
+                get => Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/IsMarketDay", out var reason) == true
+                        && Reasons.Contains(reason) ? reason : "false";
+                set => Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = Reasons.Contains(value) ? value : "false";
+            }
+
+            public static bool IsCancelled {
+                get => Reason != "true";
+            }
         }
-
-        internal static CancellationChecks Checks = new();
 
         private static int GetAbsoluteDay() => Game1.dayOfMonth + ((int)Game1.season * 28) + ((Game1.year - 1) * 28 * 4);
 
@@ -1479,52 +1496,34 @@ namespace MarketDay
         {
             get
             {
-                if (Checks.CheckedToday) {
-                    return !Checks.IsCancelled();
-                }
-
                 var farm = Game1.getFarm();
-                if (Checks.Other = farm is null) return false;
+                if (farm is null) return false;
 
-                farm.modData.TryGetValue($"{SMod.ModManifest.UniqueID}/Rescheduled", out Checks.Rescheduled);
+                if (CancellationChecks.CheckedToday) {
+                    return !CancellationChecks.IsCancelled;
+                }
 
                 if (!Context.IsMainPlayer) {
-                        if (farm.modData.TryGetValue($"{SMod.ModManifest.UniqueID}/IsMarketDay", out var md_str)) {
-                        switch (md_str) {
-                            case "true":
-                                return true;
-                            case "wrongday":
-                                Checks.WrongDay = true;
-                                break;
-                            case "festival":
-                                Checks.Festival = true;
-                                break;
-                            case "raining":
-                                Checks.Raining = true;
-                                break;
-                            case "snowing":
-                                Checks.Snowing = true;
-                                break;
-                            default:
-                                Checks.Other = true;
-                                break;
-                        }
+                    var max = 50;
+                    while (!CancellationChecks.CheckedToday && --max > 0) { // make sure host has updated it's check first
+                        System.Threading.Thread.Sleep(100);
                     }
-                    return false;
+                    return !CancellationChecks.IsCancelled;
                 }
-                Checks.CheckedToday = true;
 
-                Checks.Festival = StardewValley.Utility.isFestivalDay(Game1.dayOfMonth, Game1.season);
-                Checks.Raining = !Config.OpenInRain && Game1.isRaining;
-                Checks.Snowing = !Config.OpenInSnow && Game1.isSnowing;
+                var festival = StardewValley.Utility.isFestivalDay(Game1.dayOfMonth, Game1.season);
+                var raining = !Config.OpenInRain && Game1.isRaining;
+                var snowing = !Config.OpenInSnow && Game1.isSnowing;
+                bool wrongDay;
 
                 if (Config.UseAdvancedOpeningOptions) {
                     if (Config.AlwaysMarketDay) {
-                        farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = "true";
+                        CancellationChecks.Reason = "true";
+                        CancellationChecks.CheckedToday = true;
                         return true;
                     }
 
-                    Checks.WrongDay = (Game1.dayOfMonth % 7) switch {
+                    wrongDay = (Game1.dayOfMonth % 7) switch {
                         0 => Config.OpenOnSun,
                         1 => Config.OpenOnMon,
                         2 => Config.OpenOnTue,
@@ -1534,48 +1533,40 @@ namespace MarketDay
                         6 => Config.OpenOnSat,
                         _ => true
                     };
-                    Checks.WrongDay = (Game1.dayOfMonth / 7) switch {
-                        0 => Checks.WrongDay && Config.OpenWeek1,
-                        1 => Checks.WrongDay && Config.OpenWeek2,
-                        2 => Checks.WrongDay && Config.OpenWeek3,
-                        3 => Checks.WrongDay && Config.OpenWeek4,
-                        _ => Checks.WrongDay
+                    wrongDay = (Game1.dayOfMonth / 7) switch {
+                        0 => wrongDay && Config.OpenWeek1,
+                        1 => wrongDay && Config.OpenWeek2,
+                        2 => wrongDay && Config.OpenWeek3,
+                        3 => wrongDay && Config.OpenWeek4,
+                        _ => wrongDay
                     };
-                    Checks.WrongDay = Game1.currentSeason switch {
-                        "spring" => Checks.WrongDay && Config.OpenInSpring,
-                        "summer" => Checks.WrongDay && Config.OpenInSummer,
-                        "fall" => Checks.WrongDay && Config.OpenInFall,
-                        "winter" => Checks.WrongDay && Config.OpenInWinter,
-                        _ => Checks.WrongDay
+                    wrongDay = Game1.currentSeason switch {
+                        "spring" => wrongDay && Config.OpenInSpring,
+                        "summer" => wrongDay && Config.OpenInSummer,
+                        "fall" => wrongDay && Config.OpenInFall,
+                        "winter" => wrongDay && Config.OpenInWinter,
+                        _ => wrongDay
                     };
-                    Checks.WrongDay = !Checks.WrongDay;
+                    wrongDay = !wrongDay;
                 } else {
-                    Checks.WrongDay = Game1.dayOfMonth % 7 != Config.DayOfWeek;
+                    wrongDay = Game1.dayOfMonth % 7 != Config.DayOfWeek;
                 }
 
-                var wasRescheduled = Checks.Rescheduled?.Equals((GetAbsoluteDay() - 1).ToString()) == true;
-
-                if (wasRescheduled && MarketDay.Config.OnNextDayIfCancelled && !Checks.Festival && !Checks.Raining && !Checks.Snowing) {
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = "true";
-                    return true;
-                } else if (!wasRescheduled && MarketDay.Config.OnNextDayIfCancelled && (Checks.Festival || Checks.Raining || Checks.Snowing)) {
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/Rescheduled"] = GetAbsoluteDay().ToString();
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = $"{(Checks.Festival ? "festival" : Checks.Raining ? "raining" : "snowing")}";
-                } else if (Checks.WrongDay) {
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = "wrongday";
-                } else if (Checks.Festival) {
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = "festival";
-                } else if (Checks.Raining) {
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = "raining";
-                } else if (Checks.Snowing) {
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = "snowing";
-                } else if (Checks.Other) {
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = "other";
+                if (CancellationChecks.Rescheduled && MarketDay.Config.OnNextDayIfCancelled && !festival && !raining && !snowing) {
+                    CancellationChecks.Reason = "true";
+                } else if (!CancellationChecks.Rescheduled && MarketDay.Config.OnNextDayIfCancelled && (festival || raining || snowing)) {
+                    CancellationChecks.Rescheduled = true;
+                    CancellationChecks.Reason = $"{(festival ? "festival" : raining ? "raining" : "snowing")}";
                 } else {
-                    farm.modData[$"{SMod.ModManifest.UniqueID}/IsMarketDay"] = "true";
-                    return true;
+                    CancellationChecks.Reason =
+                        wrongDay ? "false" :
+                        festival ? "festival" :
+                        raining ? "raining" :
+                        snowing ? "snowing" :
+                        "true";
                 }
-                return false;
+                CancellationChecks.CheckedToday = true;
+                return !CancellationChecks.IsCancelled;
             }
         }
 
