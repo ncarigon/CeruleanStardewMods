@@ -510,7 +510,7 @@ namespace MarketDay
                     case "festival":
                     case "raining":
                     case "snowing":
-                        action = CancellationChecks.WasRescheduledYesterday ? Get($"market-day-off-rescheduled") : Get($"market-day-off-cancelled");
+                        action = CancellationChecks.RescheduledDay == GetAbsoluteDay() ? Get($"market-day-off-rescheduled") : Get($"market-day-off-cancelled");
                         reason = Get($"market-day-off-{reason}");
                         break;
                     default:
@@ -1480,14 +1480,11 @@ namespace MarketDay
                 set => Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/Checked"] = value ? GetAbsoluteDay().ToString() : "-1";
             }
 
-            public static bool WasRescheduledYesterday =>
-                // it was rescheduled if date matches yesterday
-                Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/Rescheduled", out var rescheduled) == true
-                && int.TryParse(rescheduled, out var i) && i == GetAbsoluteDay() - 1;
-
-            public static void RescheduleForTomorrow() =>
-                // we reschedule by setting date to today, which will be checked tomorrow
-                Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/Rescheduled"] = GetAbsoluteDay().ToString();
+            public static int RescheduledDay {
+                get => Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/Rescheduled", out var rescheduled) == true
+                        && int.TryParse(rescheduled, out var i) ? i : -1;
+                set => Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/Rescheduled"] = value.ToString();
+            }
 
             public static string Reason {
                 get => Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/IsMarketDay", out var reason) == true
@@ -1562,10 +1559,11 @@ namespace MarketDay
                     wrongDay = Game1.dayOfMonth % 7 != Config.DayOfWeek;
                 }
 
-                if (CancellationChecks.WasRescheduledYesterday && MarketDay.Config.OnNextDayIfCancelled && !festival && !raining && !snowing) {
+                var yesterday = GetAbsoluteDay() - 1;
+                if (CancellationChecks.RescheduledDay == yesterday && MarketDay.Config.OnNextDayIfCancelled && !festival && !raining && !snowing) {
                     CancellationChecks.Reason = "true";
-                } else if (!CancellationChecks.WasRescheduledYesterday && MarketDay.Config.OnNextDayIfCancelled && !wrongDay && (festival || raining || snowing)) {
-                    CancellationChecks.RescheduleForTomorrow();
+                } else if (CancellationChecks.RescheduledDay != yesterday && MarketDay.Config.OnNextDayIfCancelled && !wrongDay && (festival || raining || snowing)) {
+                    CancellationChecks.RescheduledDay = yesterday + 1;
                     CancellationChecks.Reason = $"{(festival ? "festival" : raining ? "raining" : "snowing")}";
                 } else {
                     CancellationChecks.Reason =

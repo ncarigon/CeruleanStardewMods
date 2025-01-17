@@ -24,8 +24,8 @@
     "market-day-off-cancelled": "cancelled", // TODO
     "market-day-off-rescheduled": "rescheduled", // TODO
     "market-day-off-festival": "festival", // TODO
-    "market-day-off-raining": "raining", // TODO
-    "market-day-off-snowing": "snowing", // TODO
+    "market-day-off-raining": "rain", // TODO
+    "market-day-off-snowing": "snow", // TODO
     "market-day-off-msg": "Market day has been {{action}} due to today's {{reason}}.", // TODO
     "cfg.main-settings": "常规",
     "cfg.challenge-mode": "挑战模式",
