@@ -1,7 +1,7 @@
 ﻿{
   "Name": "Market Day",
   "Author": "ceruleandeep, LiSoNaZa, NCarigon",
-  "Version": "1.1.7-unofficial.4-NCarigon",
+  "Version": "1.1.7-unofficial.5-NCarigon",
   "Description": "Market Day",
   "UniqueID": "ceruleandeep.MarketDay",
   "EntryDll": "MarketDay.dll",
