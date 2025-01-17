@@ -510,7 +510,7 @@ namespace MarketDay
                     case "festival":
                     case "raining":
                     case "snowing":
-                        action = CancellationChecks.Rescheduled ? Get($"market-day-off-rescheduled") : Get($"market-day-off-cancelled");
+                        action = CancellationChecks.WasRescheduledYesterday ? Get($"market-day-off-rescheduled") : Get($"market-day-off-cancelled");
                         reason = Get($"market-day-off-{reason}");
                         break;
                     default:
@@ -1480,13 +1480,14 @@ namespace MarketDay
                 set => Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/Checked"] = value ? GetAbsoluteDay().ToString() : "-1";
             }
 
-            public static bool Rescheduled {
+            public static bool WasRescheduledYesterday =>
                 // it was rescheduled if date matches yesterday
-                get => Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/Rescheduled", out var rescheduled) == true
-                        && int.TryParse(rescheduled, out var i) && i == GetAbsoluteDay() - 1;
-                // we reschedule by setting date to today, to be checked tomorrow
-                set => Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/Rescheduled"] = value ? GetAbsoluteDay().ToString() : "-1";
-            }
+                Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/Rescheduled", out var rescheduled) == true
+                && int.TryParse(rescheduled, out var i) && i == GetAbsoluteDay() - 1;
+
+            public static void RescheduleForTomorrow() =>
+                // we reschedule by setting date to today, which will be checked tomorrow
+                Game1.getFarm().modData[$"{SMod.ModManifest.UniqueID}/Rescheduled"] = GetAbsoluteDay().ToString();
 
             public static string Reason {
                 get => Game1.getFarm()?.modData?.TryGetValue($"{SMod.ModManifest.UniqueID}/IsMarketDay", out var reason) == true
@@ -1561,10 +1562,10 @@ namespace MarketDay
                     wrongDay = Game1.dayOfMonth % 7 != Config.DayOfWeek;
                 }
 
-                if (CancellationChecks.Rescheduled && MarketDay.Config.OnNextDayIfCancelled && !festival && !raining && !snowing) {
+                if (CancellationChecks.WasRescheduledYesterday && MarketDay.Config.OnNextDayIfCancelled && !festival && !raining && !snowing) {
                     CancellationChecks.Reason = "true";
-                } else if (!CancellationChecks.Rescheduled && MarketDay.Config.OnNextDayIfCancelled && (festival || raining || snowing)) {
-                    CancellationChecks.Rescheduled = true;
+                } else if (!CancellationChecks.WasRescheduledYesterday && MarketDay.Config.OnNextDayIfCancelled && !wrongDay && (festival || raining || snowing)) {
+                    CancellationChecks.RescheduleForTomorrow();
                     CancellationChecks.Reason = $"{(festival ? "festival" : raining ? "raining" : "snowing")}";
                 } else {
                     CancellationChecks.Reason =
