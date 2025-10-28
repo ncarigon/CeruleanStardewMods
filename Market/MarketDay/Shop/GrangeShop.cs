@@ -564,9 +564,8 @@ namespace MarketDay.Shop
                 
                 // find what the NPC likes best
                 var best = GrangeChest.Items
-                    .Where(gi => gi is not null && ItemPreferenceIndex(gi, npc) > 0)
                     .OrderByDescending(a => ItemPreferenceIndex(a, npc)).FirstOrDefault();
-                if (best is null)
+                if (best is null || ItemPreferenceIndex(best, npc) < 1.0)
                 {
                     // no stock 
                     if (GrangeChest.Items.Where(gi => gi is not null).ToList().Count > 0)
@@ -869,7 +868,10 @@ namespace MarketDay.Shop
 
         private double ItemPreferenceIndex(Item item, NPC npc)
         {
-            if (item is null || npc is null) return 1.0;
+            if (item is null || npc is null) return 0.0;
+
+            // skewing each item's gift range prevents shoppers from always preferring the "first" item (upper-left oriented)
+            var r = Game1.random.NextDouble();
 
             // * gift taste
             var taste = GetGiftTasteForThisItem(item, npc);
@@ -879,13 +881,13 @@ namespace MarketDay.Shop
                 case NPC.gift_taste_hate:
                     return 0.0;
                 case NPC.gift_taste_neutral:
-                    return 1.0;
+                    return 1.0 + r;
                 case NPC.gift_taste_like:
-                    return 2.0;
+                    return 2.0 + r;
                 case NPC.gift_taste_love:
-                    return 4.0;
+                    return 4.0 + r;
                 default:
-                    return 1.0;
+                    return 1.0 + r;
             }
         }
 
