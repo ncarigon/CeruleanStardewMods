@@ -869,6 +869,9 @@ namespace MarketDay.Shop
         private double ItemPreferenceIndex(Item item, NPC npc)
         {
             if (item is null || npc is null) return 0.0;
+            
+            if (NPCUtility.IsChild(npc) && MarketDay.Config.NonChildItemTags?.Any(n => item.GetContextTags().Any(t => string.Compare(t, n, true) == 0)) == true)
+                return 0.0;
 
             // skewing each item's gift range prevents shoppers from always preferring the "first" item (upper-left oriented)
             var r = Game1.random.NextDouble();

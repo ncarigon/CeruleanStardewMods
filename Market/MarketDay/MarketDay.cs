@@ -1458,13 +1458,20 @@ namespace MarketDay
                 () => Helper.Translation.Get("cfg.warp"),
                 () => ""
             );
-            
-            // configMenu.AddKeybind(ModManifest,
-            //     () => Config.StatusKeybind,
-            //     val => Config.StatusKeybind = val,
-            //     () => Helper.Translation.Get("cfg.status"),
-            //     () => ""
-            // );
+
+            configMenu.AddKeybind(ModManifest,
+                () => Config.StatusKeybind,
+                val => Config.StatusKeybind = val,
+                () => Helper.Translation.Get("cfg.status"),
+                () => ""
+            );
+
+            configMenu.AddTextOption(ModManifest,
+                () => string.Join(',', Config.NonChildItemTags ?? Array.Empty<string>()),
+                val => Config.NonChildItemTags = (val ?? "").Split(',').Select(v => v.Trim()).Where(v => v.Length > 0).ToArray(),
+                () => Helper.Translation.Get("cfg.nonchild"),
+                () => Helper.Translation.Get("cfg.nonchild.msg")
+            );
         }
 
         public static void SaveConfig() {

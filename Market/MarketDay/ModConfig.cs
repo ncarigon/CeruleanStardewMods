@@ -58,6 +58,8 @@ namespace MarketDay
         public SButton ReloadKeybind { get; set; } = SButton.R;
         public SButton StatusKeybind { get; set; } = SButton.Q;
 
+        public string[] NonChildItemTags { get; set; } = new[] { "alcohol_item", "mature_item" };
+
         public bool GetProgression() {
             var val = Progression;
             var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;
