@@ -151,7 +151,7 @@ namespace MarketDay.ItemPriceAndStock
             }
         }
 
-        private static bool TryGetShopItemData(string? itemId, out ParsedItemData? itemData) {
+        private static bool TryGetShopItemData(string itemId, out ParsedItemData itemData) {
             itemData = ItemRegistry.GetDataOrErrorItem(itemId);
             return !itemData.IsErrorItem;
         }

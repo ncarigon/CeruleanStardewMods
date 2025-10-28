@@ -64,8 +64,8 @@ namespace MarketDay.Shop
 
         // state queries
 
-        public bool IsPlayerShop => PlayerID == Game1.player.uniqueMultiplayerID.Value
-                    || (MarketDay.Config.GetSharedShop() && PlayerID == Game1.MasterPlayer.uniqueMultiplayerID.Value);
+        public bool IsPlayerShop => PlayerID == Game1.player.UniqueMultiplayerID
+                    || (MarketDay.Config.GetSharedShop() && PlayerID == Game1.MasterPlayer.UniqueMultiplayerID);
 
         public string? Owner()
         {
