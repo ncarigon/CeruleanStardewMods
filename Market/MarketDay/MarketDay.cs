@@ -896,7 +896,7 @@ namespace MarketDay
             foreach (var store in shops) store.CloseShop();
             RemoveStrayFurniture();
 
-            if (Progression.CurrentLevel != levelBeforeClose || ForceLevelUpMail)
+            if (ForceLevelUpMail || (MarketDay.Config.Progression && Progression.CurrentLevel != levelBeforeClose))
             {
                 var LevelStrapline = Progression.CurrentLevel.Name;
                 var Name = Game1.player.farmName.Value;
