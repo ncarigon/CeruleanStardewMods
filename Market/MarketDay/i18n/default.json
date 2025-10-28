@@ -168,5 +168,25 @@
   "chat.disconnected.1": "winners never quit and quitters never win {0}",
   "chat.disconnected.2": "ok {0}'s gone, stand by while I remove all trace",
   "chat.disconnected.3": "Near... faaar... whereEEEEVER you are, {0}... our hearts will go on",
-  "chat.disconnected.4": "bye {0}... remind me to go to Lost and Found in the morning"
+  "chat.disconnected.4": "bye {0}... remind me to go to Lost and Found in the morning",
+
+  "cfg.nonchild": "Adult Item Tags",
+  "cfg.nonchild.msg":  "Children will ignore items with any of these context tags.",
+
+  "cfg.sell-bonus-options": "Sell Bonus",
+  "cfg.sell-bonus-options.msg": "Set various price bonus multipliers",
+  "cfg.sell-bonus-like": "Liked Items",
+  "cfg.sell-bonus-like.msg": "Bonus for items the customer likes",
+  "cfg.sell-bonus-love": "Loved Items",
+  "cfg.sell-bonus-love.msg": "Bonus for items the customer loves",
+  "cfg.sell-bonus-talk": "Talked To",
+  "cfg.sell-bonus-talk.msg": "Bonus for having talked to the customer today",
+  "cfg.sell-bonus-nearby": "Tending Shop",
+  "cfg.sell-bonus-nearby.msg": "Bonus for staying near your shop",
+  "cfg.sell-bonus-score": "Grange Score",
+  "cfg.sell-bonus-score.msg": "Max bonus based on shop items grange display scoring",
+  "cfg.sell-bonus-hearts": "Friendship",
+  "cfg.sell-bonus-hearts.msg": "Max bonus for being friends with the customer",
+  "cfg.sell-bonus-sign": "Signage",
+  "cfg.sell-bonus-sign.msg": "Max bonus for the sign item value"
 }

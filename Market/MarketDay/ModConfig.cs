@@ -60,6 +60,19 @@ namespace MarketDay
 
         public string[] NonChildItemTags { get; set; } = new[] { "alcohol_item", "mature_item" };
 
+        public float SellBonusLike { get; set; } = 0.1f;
+        public float SellBonusLove { get; set; } = 0.2f;
+
+        public float SellBonusTalk { get; set; } = 0.1f;
+
+        public float SellBonusNearby { get; set; } = 0.2f;
+
+        public float SellBonusScore { get; set; } = 0.1f;
+
+        public float SellBonusHearts { get; set; } = 0.1f;
+
+        public float SellBonusSign { get; set; } = 0.1f;
+
         public bool GetProgression() {
             var val = Progression;
             var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;

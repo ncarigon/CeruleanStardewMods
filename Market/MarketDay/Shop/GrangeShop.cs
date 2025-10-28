@@ -800,37 +800,38 @@ namespace MarketDay.Shop
             if (ShopSign?.displayItem.Value is Object o)
             {
                 var signSellPrice = o.sellToStorePrice();
-                signSellPrice = Math.Min(signSellPrice, 1000);
-                mult += signSellPrice / 1000.0 / 10.0;
+                signSellPrice = Math.Max(Math.Min(signSellPrice, 100), 2000);
+                mult += signSellPrice / 2000.0 * MarketDay.Config.SellBonusSign;
             }
             
             // * gift taste
             switch (GetGiftTasteForThisItem(item, npc))
             {
                 case NPC.gift_taste_like:
-                    mult += 1.2;
+                    mult += MarketDay.Config.SellBonusLike;
                     break;
                 case NPC.gift_taste_love:
-                    mult += 1.4;
+                    mult += MarketDay.Config.SellBonusLove;
                     break;
             }
 
             // * friendship
             var hearts = Game1.player.getFriendshipHeartLevelForNPC(npc.Name);
-            mult += hearts / 100.0;
-
-            mult = Math.Min(mult, MarketDay.Progression.SellPriceMultiplierLimit);
+            mult += hearts / 10.0 * MarketDay.Config.SellBonusHearts;
 
             // * talked today;
-            if (Game1.player.hasPlayerTalkedToNPC(npc.Name)) mult += 0.1;
+            if (Game1.player.hasPlayerTalkedToNPC(npc.Name)) mult += MarketDay.Config.SellBonusTalk;
             
             // * owner or owner's spouse is nearby
-            if (OwnerCharacter?.currentLocation?.Name == "Town") mult += 0.2;    
+            if (OwnerCharacter?.currentLocation?.Name == "Town") mult += MarketDay.Config.SellBonusNearby;
             else if (OwnerCharacter is Farmer farmer)
             {
-                if (farmer?.getSpouse()?.currentLocation?.Name == "Town") mult += 0.2;
-                if (MarketDay.Config.GetSharedShop() && Game1.getAllFarmers().Any(f => f?.currentLocation?.Name == "Town")) mult += 0.2;
+                if (farmer?.getSpouse()?.currentLocation?.Name == "Town") mult += MarketDay.Config.SellBonusNearby;
+                if (MarketDay.Config.GetSharedShop() && Game1.getAllFarmers().Any(f => f?.currentLocation?.Name == "Town")) mult += MarketDay.Config.SellBonusNearby;
             }
+
+            // clamp to mult limit
+            mult = Math.Min(mult, MarketDay.Progression.SellPriceMultiplierLimit);
 
             return mult;
         }
@@ -1633,12 +1634,11 @@ namespace MarketDay.Shop
         {
             return score switch
             {
-                >= 90 => 0.15,
-                >= 75 => 0.1,
-                >= 60 => 0.05,
-                < 0 => 0,
+                >= 90 => 1,
+                >= 75 => 2/3,
+                >= 60 => 1/3,
                 _ => 0
-            };
+            } * MarketDay.Config.SellBonusScore;
         }
 
         private void Log(string message, LogLevel level, bool VerboseOnly = false)

@@ -1246,7 +1246,8 @@ namespace MarketDay
                 () => Helper.Translation.Get("cfg.npc-stall-visit-chance"),
                 () => Helper.Translation.Get("cfg.npc-stall-visit-chance"),
                 min: 0f,
-                max: 1f
+                max: 1f,
+                interval: 0.01f
             );
             
             configMenu.AddBoolOption(ModManifest,
@@ -1289,7 +1290,85 @@ namespace MarketDay
                 24,
                 fieldId: "fm_RandomVisitors"
             );
-            
+
+
+
+            configMenu.AddSectionTitle(ModManifest,
+                () => Helper.Translation.Get("cfg.sell-bonus-options"));
+            configMenu.AddParagraph(ModManifest,
+                () => Helper.Translation.Get("cfg.sell-bonus-options.msg"));
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.SellBonusLike,
+                val => Config.SellBonusLike = val,
+                () => Helper.Translation.Get("cfg.sell-bonus-like"),
+                () => Helper.Translation.Get("cfg.sell-bonus-like.msg"),
+                min: 0f,
+                max: 1f,
+                interval: 0.01f
+            );
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.SellBonusLove,
+                val => Config.SellBonusLove = val,
+                () => Helper.Translation.Get("cfg.sell-bonus-love"),
+                () => Helper.Translation.Get("cfg.sell-bonus-love.msg"),
+                min: 0f,
+                max: 1f,
+                interval: 0.01f
+            );
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.SellBonusTalk,
+                val => Config.SellBonusTalk = val,
+                () => Helper.Translation.Get("cfg.sell-bonus-talk"),
+                () => Helper.Translation.Get("cfg.sell-bonus-talk.msg"),
+                min: 0f,
+                max: 1f,
+                interval: 0.01f
+            );
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.SellBonusNearby,
+                val => Config.SellBonusNearby = val,
+                () => Helper.Translation.Get("cfg.sell-bonus-nearby"),
+                () => Helper.Translation.Get("cfg.sell-bonus-nearby.msg"),
+                min: 0f,
+                max: 1f,
+                interval: 0.01f
+            );
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.SellBonusScore,
+                val => Config.SellBonusScore = val,
+                () => Helper.Translation.Get("cfg.sell-bonus-score"),
+                () => Helper.Translation.Get("cfg.sell-bonus-score.msg"),
+                min: 0f,
+                max: 1f,
+                interval: 0.01f
+            );
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.SellBonusHearts,
+                val => Config.SellBonusHearts = val,
+                () => Helper.Translation.Get("cfg.sell-bonus-hearts"),
+                () => Helper.Translation.Get("cfg.sell-bonus-hearts.msg"),
+                min: 0f,
+                max: 1f,
+                interval: 0.01f
+            );
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.SellBonusSign,
+                val => Config.SellBonusSign = val,
+                () => Helper.Translation.Get("cfg.sell-bonus-sign"),
+                () => Helper.Translation.Get("cfg.sell-bonus-sign.msg"),
+                min: 0f,
+                max: 1f,
+                interval: 0.01f
+            );
+
+
             configMenu.AddPageLink(ModManifest, "Debug", () => Helper.Translation.Get("cfg.debug-settings")+"...");
             
             configMenu.AddPage(ModManifest, "Opening", () => Helper.Translation.Get("cfg.advanced-opening"));
