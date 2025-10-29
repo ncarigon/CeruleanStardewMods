@@ -854,7 +854,7 @@ namespace MarketDay.Shop
             return taste;
         }
 
-        private string TasteName(int taste)
+        private static string TasteName(int taste)
         {
             return taste switch
             {
@@ -960,7 +960,7 @@ namespace MarketDay.Shop
         {
             var location = Game1.getLocationFromName("Town");
 
-            foreach (var (tile, item) in location.Objects.Pairs)
+            foreach (var (_, item) in location.Objects.Pairs)
             {
                 if (item is not Sign sign) continue;
                 if (!sign.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/{ShopSignKey}",
@@ -993,7 +993,7 @@ namespace MarketDay.Shop
         private Chest? FindDisplayChest()
         {
             var location = Game1.getLocationFromName("Town");
-            foreach (var (tile, item) in location.Objects.Pairs)
+            foreach (var (_, item) in location.Objects.Pairs)
             {
                 if (item is not Chest chest) continue;
                 if (!chest.modData.TryGetValue($"{MarketDay.SMod.ModManifest.UniqueID}/{GrangeChestKey}",
@@ -1260,7 +1260,7 @@ namespace MarketDay.Shop
 
             if (!onRemoval)
             {
-                if (i.Stack > 1 || i.Stack == 1 && old is {Stack: 1} && i.canStackWith(old))
+                if (i.Stack > 1 || (i.Stack == 1 && old is {Stack: 1} && i.canStackWith(old)))
                 {
                     // Log($"onGrangeChange: big stack", LogLevel.Debug);
 
@@ -1494,7 +1494,7 @@ namespace MarketDay.Shop
                     start.Y -= 42f;
                     start.X -= 4f;
                     GrangeChest.Items[j].drawInMenu(spriteBatch, start, 1f, 1f,
-                        layerDepth + 0.0201f + j / 10000f, StackDrawType.Hide);
+                        layerDepth + 0.0201f + (j / 10000f), StackDrawType.Hide);
                 }
 
                 start.X += 60f;
@@ -1625,7 +1625,7 @@ namespace MarketDay.Shop
             }
 
             pointsEarned += Math.Min(30, categoriesRepresented.Count * 5);
-            var displayFilledPoints = 9 - 2 * nullsCount;
+            var displayFilledPoints = 9 - (2 * nullsCount);
             pointsEarned += displayFilledPoints;
             return pointsEarned;
         }
@@ -1647,7 +1647,7 @@ namespace MarketDay.Shop
             MarketDay.Log($"[{Game1.player.Name}] [{ShopName}] {message}", level);
         }
 
-        private string Get(string key)
+        private static string Get(string key)
         {
             return MarketDay.SMod.Helper.Translation.Get(key);
         }
