@@ -93,23 +93,8 @@ namespace MarketDay.ItemPriceAndStock
                 }
             }
 
-            if (ItemType != "Seed")
-            {
-                AddById(priceMultiplier);
-                AddByName(priceMultiplier);
-            }
-            else
-            {
-                if (ItemIDs != null)
-                    MarketDay.Log(
-                        "ItemType of \"Seed\" is a special itemtype used for parsing Seeds from JA Pack crops and trees and does not support input via ID. If adding seeds via ID, please use the ItemType \"Object\" instead to directly sell the seeds/saplings", LogLevel.Trace);
-                if (ItemNames != null)
-                    MarketDay.Log(
-                        "ItemType of \"Seed\" is a special itemtype used for parsing Seeds from JA Pack crops and trees and does not support input via Name. If adding seeds via Name, please use the ItemType \"Object\" instead to directly sell the seeds/saplings", LogLevel.Trace);
-            }
-
-            AddByJAPack(priceMultiplier);
-
+            AddById(priceMultiplier);
+            AddByName(priceMultiplier);
             ItemsUtil.RandomizeStock(_itemPriceAndStock, MaxNumItemsSoldInItemStock);
             return _itemPriceAndStock;
         }
@@ -142,96 +127,5 @@ namespace MarketDay.ItemPriceAndStock
             }
 
         }
-
-        /// <summary>
-        /// Add all items from the JA Packs listed in the JAPacks section
-        /// </summary>
-        private void AddByJAPack(double priceMultiplier)
-        {
-            if (JAPacks == null)
-                return;
-
-            if (APIs.JsonAssets == null)
-                return;
-
-            foreach (var JAPack in JAPacks)
-            {
-                MarketDay.Log($"Adding all {ItemType}s from {JAPack}", LogLevel.Trace);
-
-                if (ItemType == "Seed")
-                {
-                    // var crops = APIs.JsonAssets.GetAllCropsFromContentPack(JAPack);
-                    var trees = APIs.JsonAssets.GetAllFruitTreesFromContentPack(JAPack);
-
-
-                    // if (crops != null)
-                    // {
-
-                    //     foreach (string crop in crops)
-                    //     {
-                    //         if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(crop)) continue;
-                    //         string id = ItemsUtil.GetSeedId(crop);
-                    //         if (id != "-1")
-                    //             _builder.AddSpecificItemToStock(id, priceMultiplier);
-                    //     }
-                    // }
-
-                    // if (trees != null)
-                    // {
-
-                    //     foreach (string tree in trees)
-                    //     {
-                    //         if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(tree)) continue;
-                    //         string id = ItemsUtil.GetSaplingId(tree);
-                    //         if (id != "-1")
-                    //             _builder.AddSpecificItemToStock(id, priceMultiplier);
-                    //     }
-                    // }
-
-                    continue; //skip the rest of the loop so we don't also add the none-seed version
-                }
-
-                var packs = GetJaItems(JAPack);
-                if (packs == null)
-                {
-                    MarketDay.Log($"No {ItemType} from {JAPack} could be found", LogLevel.Trace);
-                    continue;
-                }
-
-                foreach (string itemName in packs)
-                {
-                    if (ExcludeFromJAPacks != null && ExcludeFromJAPacks.Contains(itemName)) continue;
-                    _builder.AddItemToStock(itemName, priceMultiplier);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Depending on the itemtype, returns a list of the names of all items of that type in a JA pack
-        /// </summary>
-        /// <param name="JAPack">Unique ID of the pack</param>
-        /// <returns>A list of all the names of the items of the right item type in that pack</returns>
-        private List<string> GetJaItems(string JAPack)
-        {
-            switch (ItemType)
-            {
-                case "Object":
-                    return APIs.JsonAssets.GetAllObjectsFromContentPack(JAPack);
-                case "BigCraftable":
-                    return APIs.JsonAssets.GetAllBigCraftablesFromContentPack(JAPack);
-                case "Shirt":
-                case "Pants":
-                    return APIs.JsonAssets.GetAllClothingFromContentPack(JAPack);
-                case "Ring":
-                    return APIs.JsonAssets.GetAllObjectsFromContentPack(JAPack);
-                case "Hat":
-                    return APIs.JsonAssets.GetAllHatsFromContentPack(JAPack);
-                case "Weapon":
-                    return APIs.JsonAssets.GetAllWeaponsFromContentPack(JAPack);
-                default:
-                    return null;
-            }
-        }
-
     }
 }

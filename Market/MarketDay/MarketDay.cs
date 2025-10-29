@@ -254,7 +254,6 @@ namespace MarketDay
                 state.Add($"NPC interactions:");
                 state.Add($"    Townie visitors: {Progression.NumberOfTownieVisitors} requested, {Schedule.TownieVisitorsToday.Count} actual");
                 state.Add($"                   : {townies}");
-                state.Add($"    Random visitors: {Progression.NumberOfRandomVisitors} requested");
 
                 var times = Schedule.NPCInteractions.Keys.ToList();
                 times.Sort();
@@ -419,11 +418,6 @@ namespace MarketDay
         private void OnSaving_SetStateForTomorrow(object sender, SavingEventArgs e)
         {
             Log($"SetStateForTomorrow: {Game1.currentSeason} {Game1.dayOfMonth} {Game1.timeOfDay} {Game1.ticks}", LogLevel.Trace);
-
-            var visitors = IsMarketDay ? Progression.NumberOfRandomVisitors : 0;
-            Game1.getFarm().modData[$"aedenthorn.RandomNPC/Visitors"] = $"{visitors}";
-            Log($"SetStateForTomorrow: {IsMarketDay} {visitors}", LogLevel.Debug);
-            
             ListShopTiles("", null);
             Helper.WriteConfig(Config);
             Log($"SetStateForTomorrow: complete at {Game1.currentSeason} {Game1.dayOfMonth} {Game1.timeOfDay} {Game1.ticks}", LogLevel.Trace);
@@ -803,7 +797,7 @@ namespace MarketDay
 
             // pass 2
             
-            foreach (var (ShopLocation, RequestedShopKey) in MapUtility.EmptyShopLocations())
+            foreach (var (ShopLocation, _) in MapUtility.EmptyShopLocations())
             {
                 if (availableShopKeys.Count == 0) break;
                 var ShopKey = availableShopKeys[0];
@@ -1067,13 +1061,7 @@ namespace MarketDay
         /// <param name="e"></param>
         private void OnLaunched_STFRegistrations(object sender, GameLaunchedEventArgs e)
         {
-            APIs.RegisterJsonAssets();
-            // if (APIs.JsonAssets != null)
-            //     APIs.JsonAssets.AddedItemsToShop += JsonAssets_AddedItemsToShop;
-
             APIs.RegisterExpandedPreconditionsUtility();
-            APIs.RegisterBFAV();
-            APIs.RegisterFAVR();
         }
 
         private static void OnSaveLoaded_STFInit(object sender, SaveLoadedEventArgs e)
@@ -1090,21 +1078,6 @@ namespace MarketDay
             // ItemsUtil.RegisterItemsToRemove();
         }
         
-        private static void JsonAssets_AddedItemsToShop(object sender, EventArgs e)
-        {
-            if (Game1.activeClickableMenu is ShopMenu shop)
-            {
-                var itemsPriceAndStock = shop.itemPriceAndStock;
-                List<ISalable> removeItems = (itemsPriceAndStock.Keys.Where(item => ItemsUtil.ItemsToRemove.Contains(item.Name))).ToList();
-
-                foreach (var item in removeItems)
-                {
-                    itemsPriceAndStock.Remove(item);
-                }
-                shop.setItemPriceAndStock(itemsPriceAndStock);
-            }
-        }
-
         private void setupGMCM() {
             configMenu = Helper.ModRegistry.GetApi<IGenericModConfigMenuApi>("spacechase0.GenericModConfigMenu");
             if (configMenu is null) return;
@@ -1279,16 +1252,6 @@ namespace MarketDay
                 0,
                 100,
                 fieldId: "fm_TownieVisitors"
-            );
-            
-            configMenu.AddNumberOption(ModManifest,
-                () => Config.NumberOfRandomVisitors,
-                val => Config.NumberOfRandomVisitors = val,
-                () => Helper.Translation.Get("cfg.random-visitors"),
-                () => Helper.Translation.Get("cfg.random-visitors.msg"),
-                0,
-                24,
-                fieldId: "fm_RandomVisitors"
             );
 
 

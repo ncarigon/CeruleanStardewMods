@@ -105,13 +105,6 @@ namespace MarketDay.Data
                     ? CurrentLevel.NumberOfTownieVisitors
                     : MarketDay.Config.NumberOfTownieVisitors
             ));
-
-        internal int NumberOfRandomVisitors =>
-            Math.Max(1, Math.Min(24, 
-                MarketDay.Config.GetProgression()
-                    ? CurrentLevel.NumberOfRandomVisitors
-                    : MarketDay.Config.NumberOfRandomVisitors
-            ));
         
         internal double SellPriceMultiplierLimit =>
             Math.Max(1, Math.Min(4, 

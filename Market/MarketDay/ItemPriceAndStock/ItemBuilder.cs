@@ -56,8 +56,6 @@ namespace MarketDay.ItemPriceAndStock
             }
             
             if (id != "-1" && id != "0") return AddSpecificItemToStock(id, priceMultiplier);
-            var item = ItemsUtil.GetDGAObjectByName(itemName, _itemStock.ItemType);
-            if (item is not null) return AddSpecificItemToStock(item, priceMultiplier);
             MarketDay.Log($"{_itemStock.ItemType} named \"{itemName}\" could not be added to the Shop {_itemStock.ShopName}", LogLevel.Trace);
             return false;
         }

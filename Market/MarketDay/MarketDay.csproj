@@ -22,11 +22,11 @@
 
     <ItemGroup>
       <Reference Include="ContentPatcher">
-        <HintPath>D:\games\Stardew Valley\MO2\mods\Content Patcher\ContentPatcher\ContentPatcher.dll</HintPath>
+        <HintPath>E:\games\Stardew Valley\MO2\mods\Content Patcher\ContentPatcher\ContentPatcher.dll</HintPath>
         <Private>False</Private>
       </Reference>
       <Reference Include="MailFrameworkMod">
-        <HintPath>D:\games\Stardew Valley\MO2\mods\MailFrameworkMod\MailFrameworkMod\MailFrameworkMod.dll</HintPath>
+        <HintPath>E:\games\Stardew Valley\MO2\mods\MailFrameworkMod\MailFrameworkMod\MailFrameworkMod.dll</HintPath>
         <Private>False</Private>
       </Reference>
     </ItemGroup>

@@ -13,9 +13,6 @@ namespace MarketDay.Utility
     /// </summary>
     public static class ItemsUtil
     {
-        public static List<string> PacksToRemove { get; } = new List<string>();
-        public static List<string> RecipePacksToRemove { get; } = new List<string>();
-        public static List<string> ItemsToRemove { get; } = new List<string>();
 
         /// <summary>
         /// Given and ItemInventoryAndStock, and a maximum number, randomly reduce the stock until it hits that number
@@ -33,17 +30,6 @@ namespace MarketDay.Utility
         internal static bool Equal(ISalable a, ISalable b)
         {
             if (a is null || b is null) return false;
-
-            var dgaApi = APIs.dgaApi.Value;
-            if (dgaApi is not null)
-            {
-                var aID = dgaApi.GetDGAItemId(a);
-                var bID = dgaApi.GetDGAItemId(b);
-                if (aID is not null && bID is not null)
-                {
-                    return aID == bID;
-                }
-            }
 
             switch (a)
             {
@@ -93,28 +79,6 @@ namespace MarketDay.Utility
             }
 
             return "-1";
-        }
-
-        public static ISalable GetDGAObjectByName(string name, string itemType = "Object")
-        {
-            if (APIs.dgaApi.Value is not { } dgaApi)
-            {
-                MarketDay.Log($"{name}/{itemType}: could not get DGA API", LogLevel.Trace);
-                return null;
-            }
-
-            var obj = dgaApi.SpawnDGAItem(name);
-            switch (obj)
-            {
-                case null:
-                    MarketDay.Log($"{name}/{itemType}: not a DGA object", LogLevel.Trace);
-                    return null;
-                case ISalable item:
-                    return item;
-                default:
-                    MarketDay.Log($"{name}/{itemType}: not a saleable object", LogLevel.Trace);
-                    return null;
-            }
         }
 
         /// <summary>
@@ -202,6 +166,8 @@ namespace MarketDay.Utility
             return candidates.Any() ? candidates[Game1.random.Next(candidates.Count)] : "-1";
         }
 
+        private static readonly string[] ValidTypes = new[] { "Object", "BigCraftable", "Shirt", "Pants", "Ring", "Hat", "Boot", "Furniture", "Weapon" };
+
         /// <summary>
         /// Checks if an itemtype is valid
         /// </summary>
@@ -209,128 +175,12 @@ namespace MarketDay.Utility
         /// <returns>True if it's a valid type, false if not</returns>
         public static bool CheckItemType(string itemType)
         {
-            string searchString = "Object|BigCraftable|Shirt|Pants|Ring|Hat|Boot|Furniture|Weapon";
-
-            return itemType == "Seed" || searchString.Contains(itemType);
-        }
-
-        /// <summary>
-        /// Given the name of a crop, return the ID of its seed object
-        /// </summary>
-        /// <param name="cropName">The name of the crop object</param>
-        /// <returns>The ID of the seed object if found, -1 if not</returns>
-        // public static string GetSeedId(string cropName)
-        // {
-        //     //int cropID = MarketDay.JsonAssets.GetCropId(cropName);
-        //     int cropId = APIs.JsonAssets.GetCropId(cropName);
-        //     foreach (KeyValuePair<string, StardewValley.GameData.Crops.CropData> kvp in _cropData)
-        //     {
-        //         //find the tree id in crops information to get seed id
-        //         Int32.TryParse(kvp.Value.ToString(), out int id);
-        //         if (cropId == id)
-        //             return kvp.Key;
-        //     }
-
-        //     return "-1";
-        // }
-
-        /// <summary>
-        /// Given the name of a tree crop, return the ID of its sapling object
-        /// </summary>
-        /// <returns>The ID of the sapling object if found, -1 if not</returns>
-        // public static string GetSaplingId(string treeName)
-        // {
-        //     string treeId = APIs.JsonAssets.GetFruitTreeId(treeName).ToString();
-        //     foreach (KeyValuePair<string, StardewValley.GameData.FruitTrees.FruitTreeData> kvp in _fruitTreeData)
-        //     {
-        //         //find the tree id in fruitTrees information to get sapling id
-        //         Int32.TryParse(kvp.Value.DisplayName, out int id);
-        //         if (treeId == id.ToString())
-        //             return kvp.Key.ToString();
-        //     }
-
-        //     return "-1";
-        // }
-
-        public static void RegisterItemsToRemove()
-        {
-            if (APIs.JsonAssets == null)
-                return;
-
-            foreach (string pack in PacksToRemove)
-            {
-                var items = APIs.JsonAssets.GetAllBigCraftablesFromContentPack(pack);
-                if (items != null)
-                    ItemsToRemove.AddRange(items);
-
-                items = APIs.JsonAssets.GetAllClothingFromContentPack(pack);
-                if (items != null)
-                    ItemsToRemove.AddRange(items);
-
-                items = APIs.JsonAssets.GetAllHatsFromContentPack(pack);
-                if (items != null)
-                    ItemsToRemove.AddRange(items);
-
-                items = APIs.JsonAssets.GetAllObjectsFromContentPack(pack);
-                if (items != null)
-                {
-                    ItemsToRemove.AddRange(items);
-                }
-
-                // var crops = APIs.JsonAssets.GetAllCropsFromContentPack(pack);
-
-                // if (crops != null)
-                // {
-                //     foreach (string seedId in crops.Select(GetSeedId))
-                //     {
-                //         ItemsToRemove.Add(ObjectInfoSourceObject[seedId].Name);
-                //     }
-                // }
-
-                // var trees = APIs.JsonAssets.GetAllFruitTreesFromContentPack(pack);
-                // if (trees != null)
-                // {
-                //     foreach (string saplingID in trees.Select(GetSaplingId))
-                //     {
-                //         ItemsToRemove.Add(ObjectInfoSourceObject[saplingID].Name);
-                //     }
-                // }
-
-
-                items = APIs.JsonAssets.GetAllWeaponsFromContentPack(pack);
-                if (items != null)
-                    ItemsToRemove.AddRange(items);
-            }
-
-            foreach (string pack in RecipePacksToRemove)
-            {
-                var items = APIs.JsonAssets.GetAllBigCraftablesFromContentPack(pack);
-                if (items != null)
-                    ItemsToRemove.AddRange(items.Select(i => (i + " Recipe")));
-
-                items = APIs.JsonAssets.GetAllObjectsFromContentPack(pack);
-                if (items != null)
-                {
-                    ItemsToRemove.AddRange(items.Select(i => (i + " Recipe")));
-                }
-            }
-        }
-
-        public static Dictionary<ISalable, ItemStockInformation> RemoveSpecifiedJAPacks(Dictionary<ISalable, ItemStockInformation> stock)
-        {
-            List<ISalable> removeItems = (stock.Keys.Where(item => ItemsToRemove.Contains(item.Name))).ToList();
-
-            foreach (var item in removeItems)
-            {
-                stock.Remove(item);
-            }
-
-            return stock;
+            return ValidTypes.Any(i => string.Compare(i, itemType, true) == 0);
         }
 
         public static void RemoveSoldOutItems(Dictionary<ISalable, ItemStockInformation> stock)
         {
-            List<ISalable> keysToRemove = (stock.Where(kvp => kvp.Value.Stock < 1).Select(kvp => kvp.Key)).ToList();
+            List<ISalable> keysToRemove = stock.Where(kvp => kvp.Value.Stock < 1).Select(kvp => kvp.Key).ToList();
             foreach (ISalable item in keysToRemove)
                 stock.Remove(item);
         }
