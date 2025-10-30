@@ -19,12 +19,6 @@ namespace MarketDay.Shop
         public ItemPriceAndStockManager StockManager { get; set; }
 
         public IContentPack ContentPack { set; get; }
-        
-        /// <summary>
-        /// This is used to make sure that JA only adds items to this shop the first time it is opened each day
-        /// or else items will be added every time the shop is opened
-        /// </summary>
-        protected bool _shopOpenedToday;
 
         /// <summary>
         /// Initializes the stock manager, done at game loaded so that content packs have finished loading in
@@ -69,7 +63,6 @@ namespace MarketDay.Shop
         /// </summary>
         public void UpdateItemPriceAndStock()
         {
-            _shopOpenedToday = false;
             MarketDay.Log($"Generating stock for {ShopName}", LogLevel.Trace, true);
             StockManager.Update();
         }

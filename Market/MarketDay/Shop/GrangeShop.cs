@@ -417,7 +417,6 @@ namespace MarketDay.Shop
             }
 
             Game1.activeClickableMenu = shopMenu;
-            _shopOpenedToday = true;
         }
 
 

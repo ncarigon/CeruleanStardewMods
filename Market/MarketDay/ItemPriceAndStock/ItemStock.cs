@@ -16,11 +16,9 @@ namespace MarketDay.ItemPriceAndStock
     public class ItemStock : ItemStockModel
     {
         internal string CurrencyObjectId;
-        internal double DefaultSellPriceMultiplier;
+        internal double DefaultSellPriceMultiplier = 1.0;
         internal Dictionary<double, string[]> PriceMultiplierWhen;
         internal string ShopName;
-
-        private Dictionary<double, string[]> _priceMultiplierWhen;
 
         private ItemBuilder _builder;
         private Dictionary<ISalable, ItemStockInformation> _itemPriceAndStock;
@@ -37,7 +35,6 @@ namespace MarketDay.ItemPriceAndStock
         internal void Initialize(string shopName, int price, double defaultSellPriceMultiplier, Dictionary<double, string[]> priceMultiplierWhen)
         {
             ShopName = shopName;
-            DefaultSellPriceMultiplier = SellPriceMultiplier <= 0 ? defaultSellPriceMultiplier : SellPriceMultiplier;
             PriceMultiplierWhen = priceMultiplierWhen;
 
             if (Quality is < 0 or 3 or > 4)
@@ -52,8 +49,11 @@ namespace MarketDay.ItemPriceAndStock
             if (StockPrice < 1)
             {
                 StockPrice = price;
+                DefaultSellPriceMultiplier = SellPriceMultiplier <= 0 ? defaultSellPriceMultiplier : SellPriceMultiplier;
+            } else if (SellPriceMultiplier > 0)
+            {
+                DefaultSellPriceMultiplier = SellPriceMultiplier;
             }
-            _priceMultiplierWhen = priceMultiplierWhen;
 
             if (IsRecipe)
                 Stock = 1;
@@ -81,9 +81,9 @@ namespace MarketDay.ItemPriceAndStock
             _builder.SetItemPriceAndStock(_itemPriceAndStock);
 
             double priceMultiplier = 1;
-            if (_priceMultiplierWhen != null)
+            if (PriceMultiplierWhen != null)
             {
-                foreach (KeyValuePair<double,string[]> kvp in _priceMultiplierWhen)
+                foreach (KeyValuePair<double,string[]> kvp in PriceMultiplierWhen)
                 {
                     if (APIs.Conditions.CheckConditions(kvp.Value))
                     {

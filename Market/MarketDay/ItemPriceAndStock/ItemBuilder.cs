@@ -178,43 +178,42 @@ namespace MarketDay.ItemPriceAndStock
         private ItemStockInformation GetPriceStockAndCurrency(ISalable item, double priceMultiplier)
         {
             ItemStockInformation priceStockCurrency;
-            var price = _itemStock.StockPrice;
-            if (price < 1) {
-                //if no price, try another method
-                switch (_itemStock.SellPriceMode) {
-                    case 1: // sale price, then shop price; prone to errors with non-valued items
-                        if ((price = item.salePrice()) < 1) {
-                            TryGetShopPrice(_itemStock, item.QualifiedItemId, out price);
-                        }
-                        break;
-                    case 2: // only shop price; prone to errors with items that aren't sold elsewhere
-                        TryGetShopPrice(_itemStock, item.QualifiedItemId, out price);
-                        break;
-                    case 3: // only sale price; matches legacy mode
-                        price = item.salePrice();
-                        break;
-                    default: // shop price, then sale price; less error prone
-                        if (!TryGetShopPrice(_itemStock, item.QualifiedItemId, out price)) {
-                            price = item.salePrice();
-                        }
-                        break;
-                }
-                // multiplied by defaultSellPriceMultiplier
-                price = (int)(price * _itemStock.DefaultSellPriceMultiplier);
-            }
-            price = (int)(price*priceMultiplier);
-
             if (_itemStock.CurrencyObjectId == "-1") // no currency item
             {
+                var price = _itemStock.StockPrice;
+                if (price < 1)
+                {
+                    //if no price, try another method
+                    switch (_itemStock.SellPriceMode)
+                    {
+                        case 1: // sale price, then shop price; prone to errors with non-valued items
+                            if ((price = item.salePrice()) < 1)
+                            {
+                                TryGetShopPrice(_itemStock, item.QualifiedItemId, out price);
+                            }
+                            break;
+                        case 2: // only shop price; prone to errors with items that aren't sold elsewhere
+                            TryGetShopPrice(_itemStock, item.QualifiedItemId, out price);
+                            break;
+                        case 3: // only sale price; matches legacy mode
+                            price = item.salePrice();
+                            break;
+                        default: // shop price, then sale price; less error prone
+                            if (!TryGetShopPrice(_itemStock, item.QualifiedItemId, out price))
+                            {
+                                price = item.salePrice();
+                            }
+                            break;
+                    }
+                    // multiplied by defaultSellPriceMultiplier
+                    price = (int)(price * _itemStock.DefaultSellPriceMultiplier);
+                }
+                price = (int)(price * priceMultiplier);
                 priceStockCurrency = new(price, _itemStock.Stock);
             }
-            else if (_itemStock.StockCurrencyStack == -1) //no stack provided for currency item so defaults to 1
+            else
             {
-                priceStockCurrency = new(price, _itemStock.Stock, _itemStock.CurrencyObjectId);
-            }
-            else //both currency item and stack provided
-            {
-                priceStockCurrency = new(price, _itemStock.Stock, _itemStock.CurrencyObjectId, _itemStock.StockCurrencyStack);
+                priceStockCurrency = new(0, _itemStock.Stock, _itemStock.CurrencyObjectId, Math.Max(1, _itemStock.StockCurrencyStack));
             }
 
             return priceStockCurrency;
