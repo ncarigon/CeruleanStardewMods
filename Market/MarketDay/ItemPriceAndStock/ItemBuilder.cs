@@ -79,7 +79,7 @@ namespace MarketDay.ItemPriceAndStock
                 return false;
             }
 
-            if (_itemStock.ItemType == "Seed" && _itemStock.FilterSeedsBySeason)
+            if (_itemStock.FilterBySeason)
             {
                 if (!ItemsUtil.IsInSeasonCrop(itemId)) return false;
             }
@@ -131,10 +131,9 @@ namespace MarketDay.ItemPriceAndStock
             switch (_itemStock.ItemType)
             {
                 case "Object":
-                case "Seed":
-                    return new StardewValley.Object(itemId, _itemStock.Stock, _itemStock.IsRecipe, quality: _itemStock.Quality);
+                    return new SObject(itemId, _itemStock.Stock, _itemStock.IsRecipe, quality: _itemStock.Quality);
                 case "BigCraftable":
-                    return new StardewValley.Object(Vector2.Zero, itemId) { Stack = _itemStock.Stock, IsRecipe = _itemStock.IsRecipe };
+                    return new SObject(Vector2.Zero, itemId) { Stack = _itemStock.Stock, IsRecipe = _itemStock.IsRecipe };
                 case "Shirt":
                 case "Pants":
                     return new Clothing(itemId);
@@ -219,11 +218,12 @@ namespace MarketDay.ItemPriceAndStock
                 priceStockCurrency = new(0, _itemStock.Stock, _itemStock.CurrencyObjectId, Math.Max(1, _itemStock.StockCurrencyStack));
             }
 
+            var highestMult = 0f;
             if (IsMuseumItem(item))
             {
                 if (MarketDay.Config.MuseumItemMult >= 1.0f)
                 {
-                    priceStockCurrency.Price = (int)(priceStockCurrency.Price * MarketDay.Config.MuseumItemMult);
+                    highestMult = MarketDay.Config.MuseumItemMult;
                 } else
                 {
                     priceStockCurrency.Stock = 0;
@@ -234,11 +234,20 @@ namespace MarketDay.ItemPriceAndStock
             {
                 if (MarketDay.Config.BundleItemMult >= 1.0f)
                 {
-                    priceStockCurrency.Price = (int)(priceStockCurrency.Price * MarketDay.Config.BundleItemMult);
+                    if (MarketDay.Config.BundleItemMult > highestMult)
+                    {
+                        highestMult = MarketDay.Config.BundleItemMult;
+                    }
                 } else
                 {
                     priceStockCurrency.Stock = 0;
                 }
+            }
+
+            if (highestMult > 0)
+            {
+                // prevents double mult for an item that is both museum and bundle
+                priceStockCurrency.Price = (int)(priceStockCurrency.Price * highestMult);
             }
 
             return priceStockCurrency;

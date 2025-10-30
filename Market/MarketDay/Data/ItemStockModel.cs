@@ -13,7 +13,7 @@ namespace MarketDay.Data
         public int Quality { get; set; } = 0;
         public string[] ItemIDs { get; set; } = null;
         public string[] ItemNames { get; set; } = null;
-        public bool FilterSeedsBySeason { get; set; } = true;
+        public bool FilterBySeason { get; set; } = true;
         public int Stock { get; set; } = int.MaxValue;
         public int MaxNumItemsSoldInItemStock { get; set; } = int.MaxValue;
         public string[] When { get; set; } = null;

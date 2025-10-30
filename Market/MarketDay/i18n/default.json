@@ -191,7 +191,7 @@
   "cfg.sell-bonus-sign.msg": "Max bonus for the sign item value",
 
   "cfg.buy-mult-options": "Buy Item Penalties",
-  "cfg.buy-mult-options.msg": "Set various penalty multipliers",
+  "cfg.buy-mult-options.msg": "Set various buy penalty multipliers",
   "cfg.buy-mult-bundle": "Bundle Items",
   "cfg.buy-mult-bundle.msg": "Buy penalty multiplier when buying bundle donation items. Values less than '1.0' will remove bundle items from all shops.",
   "cfg.buy-mult-museum": "Museum Items",
