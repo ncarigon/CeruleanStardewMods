@@ -25,7 +25,6 @@ namespace MarketDay.Data
         public string Name { get; set; }
         public int NumberOfShops { get; set; }
         public int NumberOfTownieVisitors { get; set; }
-        public int NumberOfRandomVisitors { get; set; }
         public int UnlockAtEarnings { get; set; }
         public int UnlockAtEarningsForDifficulty => (int)(UnlockAtEarnings * Game1.MasterPlayer.difficultyModifier);
         public int AutoRestock { get; set; } = 4;

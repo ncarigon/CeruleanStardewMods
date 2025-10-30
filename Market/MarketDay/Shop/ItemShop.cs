@@ -59,7 +59,6 @@ namespace MarketDay.Shop
         
         /// <summary>
         /// Refreshes the contents of all stores
-        /// and sets the flag for if the store has been opened yet today to false
         /// </summary>
         public void UpdateItemPriceAndStock()
         {

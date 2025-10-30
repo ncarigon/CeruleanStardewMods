@@ -221,7 +221,7 @@ namespace MarketDay.ItemPriceAndStock
 
             if (IsMuseumItem(item))
             {
-                if (MarketDay.Config.MuseumItemMult > 0.0f)
+                if (MarketDay.Config.MuseumItemMult >= 1.0f)
                 {
                     priceStockCurrency.Price = (int)(priceStockCurrency.Price * MarketDay.Config.MuseumItemMult);
                 } else
@@ -232,7 +232,7 @@ namespace MarketDay.ItemPriceAndStock
 
             if (IsBundleItem(item))
             {
-                if (MarketDay.Config.BundleItemMult > 0.0f)
+                if (MarketDay.Config.BundleItemMult >= 1.0f)
                 {
                     priceStockCurrency.Price = (int)(priceStockCurrency.Price * MarketDay.Config.BundleItemMult);
                 } else
