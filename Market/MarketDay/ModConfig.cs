@@ -72,6 +72,10 @@ namespace MarketDay
 
         public float SellBonusSign { get; set; } = 0.1f;
 
+        public float BundleItemMult { get; set; } = 2.0f;
+
+        public float MuseumItemMult { get; set; } = 2.0f;
+
         public bool GetProgression() {
             var val = Progression;
             var farm = Game1.hasLoadedGame ? Game1.getFarm() : null;

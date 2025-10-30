@@ -1255,7 +1255,6 @@ namespace MarketDay
             );
 
 
-
             configMenu.AddSectionTitle(ModManifest,
                 () => Helper.Translation.Get("cfg.sell-bonus-options"));
             configMenu.AddParagraph(ModManifest,
@@ -1329,6 +1328,32 @@ namespace MarketDay
                 min: 0f,
                 max: 1f,
                 interval: 0.01f
+            );
+
+
+            configMenu.AddSectionTitle(ModManifest,
+                () => Helper.Translation.Get("cfg.buy-mult-options"));
+            configMenu.AddParagraph(ModManifest,
+                () => Helper.Translation.Get("cfg.buy-mult-options.msg"));
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.BundleItemMult,
+                val => Config.BundleItemMult = val,
+                () => Helper.Translation.Get("cfg.buy-mult-bundle"),
+                () => Helper.Translation.Get("cfg.buy-mult-bundle.msg"),
+                min: 0f,
+                max: 10f,
+                interval: 0.1f
+            );
+
+            configMenu.AddNumberOption(ModManifest,
+                () => Config.MuseumItemMult,
+                val => Config.MuseumItemMult = val,
+                () => Helper.Translation.Get("cfg.buy-mult-museum"),
+                () => Helper.Translation.Get("cfg.buy-mult-museum.msg"),
+                min: 0f,
+                max: 10f,
+                interval: 0.1f
             );
 
 

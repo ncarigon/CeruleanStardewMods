@@ -1,14 +1,15 @@
-﻿using MarketDay;
-using MarketDay.ItemPriceAndStock;
-using MarketDay.Utility;
-using StardewModdingAPI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HarmonyLib;
+using MarketDay;
 using MarketDay.API;
 using MarketDay.Data;
+using MarketDay.ItemPriceAndStock;
+using MarketDay.Utility;
 using Microsoft.Xna.Framework.Graphics;
-using HarmonyLib;
+using StardewModdingAPI;
+using StardewValley;
 
 namespace MarketDay.Shop
 {
@@ -20,6 +21,8 @@ namespace MarketDay.Shop
     {
         public static readonly Dictionary<string, GrangeShop> GrangeShops = new();
         public static readonly Dictionary<string, AnimalShop> AnimalShops = new();
+
+        internal static string[] ParsedBundleData;
 
         /// <summary>
         /// Takes content packs and loads them as ItemShop and AnimalShop objects
@@ -204,6 +207,7 @@ namespace MarketDay.Shop
             if (GrangeShops.Count > 0)
                 MarketDay.Log($"Refreshing stock for all custom shops...", LogLevel.Trace);
 
+            ParsedBundleData = Game1.netWorldState.Value.BundleData.Values.SelectMany(b => (b ?? "").Split('/').Skip(2).First().Split(' ')).ToArray();
             foreach (var grangeShop in GrangeShops.Values)
             {
                 if (! grangeShop.IsPlayerShop) grangeShop.UpdateItemPriceAndStock();

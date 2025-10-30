@@ -8,6 +8,8 @@ using MarketDay.Utility;
 using System.Linq;
 using System;
 using StardewValley.ItemTypeDefinitions;
+using SObject = StardewValley.Object;
+using MarketDay.Shop;
 
 namespace MarketDay.ItemPriceAndStock
 {
@@ -105,7 +107,7 @@ namespace MarketDay.ItemPriceAndStock
             }
 
             var priceStockCurrency = GetPriceStockAndCurrency(item, priceMultiplier);
-            if (priceStockCurrency.Price < 1) {
+            if (!(priceStockCurrency.Price > 0 || (priceStockCurrency.TradeItem != null && priceStockCurrency.TradeItemCount > 0))) {
                 if (MarketDay.Config.NoFreeItems) {
                     MarketDay.Log($"{item.Name} does not have a valid price and will not be stocked.", LogLevel.Warn);
                     return false;
@@ -113,6 +115,7 @@ namespace MarketDay.ItemPriceAndStock
                     MarketDay.Log($"{item.Name} does not have a valid price and will be free.", LogLevel.Warn);
                 }
             }
+
             _itemPriceAndStock.Add(item, priceStockCurrency);
 
             return true;
@@ -216,7 +219,56 @@ namespace MarketDay.ItemPriceAndStock
                 priceStockCurrency = new(0, _itemStock.Stock, _itemStock.CurrencyObjectId, Math.Max(1, _itemStock.StockCurrencyStack));
             }
 
+            if (IsMuseumItem(item))
+            {
+                if (MarketDay.Config.MuseumItemMult > 0.0f)
+                {
+                    priceStockCurrency.Price = (int)(priceStockCurrency.Price * MarketDay.Config.MuseumItemMult);
+                } else
+                {
+                    priceStockCurrency.Stock = 0;
+                }
+            }
+
+            if (IsBundleItem(item))
+            {
+                if (MarketDay.Config.BundleItemMult > 0.0f)
+                {
+                    priceStockCurrency.Price = (int)(priceStockCurrency.Price * MarketDay.Config.BundleItemMult);
+                } else
+                {
+                    priceStockCurrency.Stock = 0;
+                }
+            }
+
             return priceStockCurrency;
+        }
+
+        private static bool IsBundleItem(ISalable item)
+        {
+            {
+                
+            }
+            if (item is SObject o && ShopManager.ParsedBundleData?.Length >= 3)
+            {
+                for (var i = 0; i < ShopManager.ParsedBundleData.Length - 2; i += 3)
+                {
+                    if (ShopManager.ParsedBundleData[i]?.Equals(o.ItemId) == true
+                        && ShopManager.ParsedBundleData[i + 2]?.Equals(o.Quality.ToString()) == true
+                    )
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static readonly string[] MuseumTypes = new[] { "Arch", "Minerals" };
+
+        private static bool IsMuseumItem(ISalable item)
+        {
+            return item is SObject o && MuseumTypes.Contains(o.Type);
         }
     }
 }
