@@ -1,7 +1,7 @@
 {
     "Name": "[MD] Base Shops",
     "Author": "lisonaza",
-    "Version": "1.0.1",
+    "Version": "1.0.2-unofficial.1-NCarigon",
     "Description": "Market Day: Base Shops",
     "UniqueID": "lisonaza.MarketDay.MD",
     "UpdateKeys": [
@@ -9,7 +9,7 @@
     ],
     "MinimumApiVersion": "4.0.0",
     "ContentPackFor": {
-        "UniqueID": "lisonaza.MarketDay",
-        "MinimumVersion": "1.0.1"
+        "UniqueID": "ceruleandeep.MarketDay",
+        "MinimumVersion": "1.1.7"
     }
 }
