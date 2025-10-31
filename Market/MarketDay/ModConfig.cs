@@ -36,7 +36,7 @@ namespace MarketDay
         public bool OpenInSnow { get; set; }
         public bool GMMCompat { get; set; } = true;
         public int RestockItemsPerHour { get; set; } = 3;
-        public float StallVisitChance { get; set; } = 0.9f;
+        public float StallVisitChance { get; set; } = 0.7f;
         public bool ReceiveMessages { get; set; } = true;
         public bool PeekIntoChests { get; set; }
         public bool NoFreeItems { get; set; } = true;
@@ -49,7 +49,7 @@ namespace MarketDay
         public bool NPCOwnerRescheduling { get; set; } = true;
         public bool NPCVisitorRescheduling { get; set; } = true;
         public bool NPCScheduleReplacement { get; set; } = true;
-        public int NumberOfTownieVisitors { get; set; } = 25;
+        public int NumberOfTownieVisitors { get; set; } = 20;
         public bool AlwaysMarketDay { get; set; }
         public bool DebugKeybinds { get; set; }
         public SButton OpenConfigKeybind { get; set; } = SButton.V;
