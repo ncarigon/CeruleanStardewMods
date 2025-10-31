@@ -1,22 +1,23 @@
 {
-    "Name": "[CP] Market Day Config Wizard",
-    "Author": "lisonaza",
-    "Version": "1.0.1",
-    "Description": "Market Day Config Wizard",
-    "UniqueID": "lisonaza.MarketDay.Wizard",
-    "UpdateKeys": ["Nexus:???"],
-    "ContentPackFor": {
-        "UniqueID": "Pathoschild.ContentPatcher"
-    },
-    "Dependencies": [
-        {
-            "UniqueID": "misscoriel.eventrepeater",
-            "IsRequired": false
-        },
-        {
-            "UniqueID": "lisonaza.MarketDay",
-            "MinimumVersion": "1.0.1",
-            "IsRequired": true
-        }
-    ]
+	"Name": "[CP] Market Day Config Wizard",
+	"Author": "ceruleandeep",
+	"Version": "1.1.7-unofficial.1-NCarigon",
+	"Description": "Market Day Config Wizard",
+	"UniqueID": "ceruleandeep.MarketDay.Wizard",
+	"UpdateKeys": [
+		"Nexus:???"
+	],
+	"ContentPackFor": {
+		"UniqueID": "Pathoschild.ContentPatcher"
+	},
+	"Dependencies": [
+		{
+			"UniqueID": "ceruleandeep.MarketDay",
+			"MinimumVersion": "1.1.6"
+		},
+		{
+			"UniqueID": "misscoriel.eventrepeater",
+			"IsRequired": false
+		}
+	]
 }
