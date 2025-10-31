@@ -1186,7 +1186,7 @@ namespace MarketDay
                 val => Config.NumberOfShops = val,
                 () => Helper.Translation.Get("cfg.shop-layout"),
                 () => Helper.Translation.Get("cfg.shop-layout.msg"),
-                0,
+                1,
                 15,
                 fieldId: "fm_ShopLayout"
             );
@@ -1652,25 +1652,7 @@ namespace MarketDay
             }
         }
 
-        private static readonly Dictionary<string, List<int>> ShopLayouts = new()
-        {
-            ["0 Shops"] = new List<int>(),
-            ["1 Shop"] = new List<int>  {1},
-            ["2 Shops"] = new List<int> {1, 6},
-            ["3 Shops"] = new List<int> {1, 7, 8},
-            ["4 Shops"] = new List<int> {1, 5, 6, 8},
-            ["5 Shops"] = new List<int> {1, 5, 6, 7, 8},
-            ["6 Shops"] = new List<int> {1, 2, 6, 7, 8, 9},
-            ["7 Shops"] = new List<int> {1, 2, 5, 6, 7, 8, 9},
-            ["8 Shops"] = new List<int> {0, 1, 2, 5, 6, 7, 8, 9}, 
-            ["9 Shops"] = new List<int> {0, 1, 2, 3, 5, 6, 7, 8, 9},
-            ["10 Shops"] = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
-            ["11 Shops"] = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-            ["12 Shops"] = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11},
-            ["13 Shops"] = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
-            ["14 Shops"] = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
-            ["15 Shops"] = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14},
-        };
+        private static readonly int[] ShopLayouts = new[] { 5, 11, 6, 8, 1, 2, 3, 4, 7, 9, 0, 12, 13, 14, 10 };
 
         private static bool isGMMDay()
         {
@@ -1683,9 +1665,8 @@ namespace MarketDay
             if (!Context.IsWorldReady) return null;
 
             var shopCount = Progression.NumberOfShops;
-            var key = $"{shopCount} Shops";
-            if (!ShopLayouts.ContainsKey(key)) key = "6 Shops";
-            return ShopLayouts.TryGetValue(key, out var layout) ? layout : null;
+            if (shopCount < 0 || shopCount > ShopLayouts.Length) shopCount = 6;
+            return ShopLayouts.Take(shopCount).ToList();
         }
         
         private static string[] ShopPositions()

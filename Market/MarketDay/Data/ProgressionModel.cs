@@ -89,7 +89,7 @@ namespace MarketDay.Data
         {
             get
             {
-                var farmhands = MarketDay.Config.GetSharedShop() ? 0 : Game1.getAllFarmers().Count(f => f.isActive()) - 1; 
+                var farmhands = MarketDay.Config.GetSharedShop() ? 1 : Game1.getAllFarmers().Count(f => f.isActive());
                 return Math.Max(1, Math.Min(15,
                     MarketDay.Config.GetProgression()
                         ? CurrentLevel.NumberOfShops + farmhands
