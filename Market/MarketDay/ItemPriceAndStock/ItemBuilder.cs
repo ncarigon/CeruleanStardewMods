@@ -10,6 +10,7 @@ using System;
 using StardewValley.ItemTypeDefinitions;
 using SObject = StardewValley.Object;
 using MarketDay.Shop;
+using StardewValley.Locations;
 
 namespace MarketDay.ItemPriceAndStock
 {
@@ -46,17 +47,17 @@ namespace MarketDay.ItemPriceAndStock
             string id;
             if (itemName.StartsWith(CategorySearchPrefix))
             {
-                var offset = CategorySearchPrefix.Length + 1;
+                var offset = CategorySearchPrefix.Length;
                 id = ItemsUtil.GetIndexByCategory(itemName[offset..], _itemStock.ItemType);
             }
             else if (itemName.StartsWith(NameSearchPrefix))
             {
-                var offset = NameSearchPrefix.Length + 1;
+                var offset = NameSearchPrefix.Length;
                 id = ItemsUtil.GetIndexByMatch(itemName[offset..], _itemStock.ItemType);
             } else {
                 id = ItemsUtil.GetIndexByName(itemName, _itemStock.ItemType);
             }
-            
+
             if (id != "-1" && id != "0") return AddSpecificItemToStock(id, priceMultiplier);
             MarketDay.Log($"{_itemStock.ItemType} named \"{itemName}\" could not be added to the Shop {_itemStock.ShopName}", LogLevel.Trace);
             return false;
@@ -79,12 +80,20 @@ namespace MarketDay.ItemPriceAndStock
                 return false;
             }
 
-            if (_itemStock.FilterBySeason)
+            var item = CreateItem(itemId);
+
+            if (_itemStock.FilterBySeason && item is SObject o
+                && new[] { SObject.SeedsCategory, SObject.FruitsCategory, SObject.VegetableCategory, SObject.GreensCategory, SObject.flowersCategory, SObject.FishCategory }.Contains(o.Category)
+            )
             {
-                if (!ItemsUtil.IsInSeasonCrop(itemId)) return false;
+                if (!ItemsUtil.IsInSeason(o)) return false;
             }
 
-            var item = CreateItem(itemId);
+            if (item is Clothing c)
+            {
+                c.Dye(new Color((uint)Game1.random.NextInt64()) { A = byte.MaxValue }, 1f);
+            }
+            
             return item != null && AddSpecificItemToStock(item, priceMultiplier);
         }
 
@@ -185,32 +194,24 @@ namespace MarketDay.ItemPriceAndStock
                 var price = _itemStock.StockPrice;
                 if (price < 1)
                 {
-                    //if no price, try another method
-                    switch (_itemStock.SellPriceMode)
+                    var sellPrice = item.salePrice();
+                    TryGetShopPrice(_itemStock, item.QualifiedItemId, out var shopPrice);
+                    if (sellPrice > 0 && shopPrice > 0)
                     {
-                        case 1: // sale price, then shop price; prone to errors with non-valued items
-                            if ((price = item.salePrice()) < 1)
-                            {
-                                TryGetShopPrice(_itemStock, item.QualifiedItemId, out price);
-                            }
-                            break;
-                        case 2: // only shop price; prone to errors with items that aren't sold elsewhere
-                            TryGetShopPrice(_itemStock, item.QualifiedItemId, out price);
-                            break;
-                        case 3: // only sale price; matches legacy mode
-                            price = item.salePrice();
-                            break;
-                        default: // shop price, then sale price; less error prone
-                            if (!TryGetShopPrice(_itemStock, item.QualifiedItemId, out price))
-                            {
-                                price = item.salePrice();
-                            }
-                            break;
+                        price = (int)((sellPrice * 0.9) + (shopPrice * 0.1));
+                    } else if (sellPrice > 0 && shopPrice < 1)
+                    {
+                        price = sellPrice;
+                    } else if (sellPrice < 1 && shopPrice > 0)
+                    {
+                        price = shopPrice;
                     }
-                    // multiplied by defaultSellPriceMultiplier
+
+                    // apply mult
                     price = (int)(price * _itemStock.DefaultSellPriceMultiplier);
                 }
-                price = (int)(price * priceMultiplier);
+                // apply When mult
+                price = (int)(Math.Max(0, price) * priceMultiplier);
                 priceStockCurrency = new(price, _itemStock.Stock);
             }
             else
@@ -255,29 +256,14 @@ namespace MarketDay.ItemPriceAndStock
 
         private static bool IsBundleItem(ISalable item)
         {
-            {
-                
-            }
-            if (item is SObject o && ShopManager.ParsedBundleData?.Length >= 3)
-            {
-                for (var i = 0; i < ShopManager.ParsedBundleData.Length - 2; i += 3)
-                {
-                    if (ShopManager.ParsedBundleData[i]?.Equals(o.ItemId) == true
-                        && ShopManager.ParsedBundleData[i + 2]?.Equals(o.Quality.ToString()) == true
-                    )
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            return item is SObject i && Game1.getLocationFromName("CommunityCenter") is CommunityCenter c && c.couldThisIngredienteBeUsedInABundle(i);
         }
 
         private static readonly string[] MuseumTypes = new[] { "Arch", "Minerals" };
 
         private static bool IsMuseumItem(ISalable item)
         {
-            return item is SObject o && MuseumTypes.Contains(o.Type);
+            return item is SObject o && MuseumTypes.Contains(o.Type) && !LibraryMuseum.HasDonatedArtifact(item.QualifiedItemId);
         }
     }
 }
