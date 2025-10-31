@@ -43,34 +43,13 @@
 					"ItemNames": [
 						"Potato",
 						"Strawberry",
-						"Green Bean"
-					],
-					"When": [
-						"z summer/z fall/z winter"
-					],
-					"Stock": 10
-				},
-				{
-					"ItemType": "Object",
-					"ItemNames": [
+						"Green Bean",
 						"Corn",
 						"Tomato",
-						"Hops"
-					],
-					"When": [
-						"z spring/z fall/z winter"
-					],
-					"Stock": 10
-				},
-				{
-					"ItemType": "Object",
-					"ItemNames": [
+						"Hops",
 						"Corn",
 						"Eggplant",
 						"Grape"
-					],
-					"When": [
-						"z spring/z summer/z winter"
 					],
 					"Stock": 10
 				},
@@ -82,6 +61,7 @@
 					"When": [
 						"z spring/z summer/z fall"
 					],
+					"FilterBySeason": false,
 					"SellPriceMultiplier": 3.0,
 					"Stock": 10
 				}
@@ -106,40 +86,17 @@
 						"Potato",
 						"Cauliflower",
 						"Parsnip",
-						"Green Bean"
-					],
-					"Quality": 1,
-					"When": [
-						"z summer/z fall/z winter"
-					],
-					"Stock": 10
-				},
-				{
-					"ItemType": "Object",
-					"ItemNames": [
+						"Green Bean",
 						"Corn",
 						"Melon",
 						"Radish",
-						"Hops"
-					],
-					"Quality": 1,
-					"When": [
-						"z spring/z fall/z winter"
-					],
-					"Stock": 10
-				},
-				{
-					"ItemType": "Object",
-					"ItemNames": [
+						"Hops",
 						"Corn",
 						"Pumpkin",
 						"Yam",
 						"Grape"
 					],
 					"Quality": 1,
-					"When": [
-						"z spring/z summer/z winter"
-					],
 					"Stock": 10
 				},
 				{
@@ -148,40 +105,17 @@
 						"Potato",
 						"Cauliflower",
 						"Parsnip",
-						"Green Bean"
-					],
-					"Quality": 2,
-					"When": [
-						"z summer/z fall/z winter"
-					],
-					"Stock": 10
-				},
-				{
-					"ItemType": "Object",
-					"ItemNames": [
+						"Green Bean",
 						"Corn",
 						"Melon",
 						"Radish",
-						"Hops"
-					],
-					"Quality": 2,
-					"When": [
-						"z spring/z fall/z winter"
-					],
-					"Stock": 10
-				},
-				{
-					"ItemType": "Object",
-					"ItemNames": [
+						"Hops",
 						"Corn",
 						"Pumpkin",
 						"Yam",
 						"Grape"
 					],
 					"Quality": 2,
-					"When": [
-						"z spring/z summer/z winter"
-					],
 					"Stock": 10
 				},
 				{

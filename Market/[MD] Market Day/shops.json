@@ -69,6 +69,7 @@
 					"ItemNames": [
 						"Coffee Bean"
 					],
+					"FilterBySeason": false,
 					"SellPriceMultiplier": 4.0,
 					"Stock": 1
 				},
@@ -119,15 +120,26 @@
 				{
 					"ItemType": "Object",
 					"ItemNames": [
-						"Yam",
-						"Chanterelle",
-						"Holly",
+						"Common Mushroom",
+						"Dandelion",
 						"Leek",
+						"Morel",
 						"Spring Onion",
+						"Wild Horseradish",
+						"Fiddlehead Fern",
+						"Grape",
+						"Spice Berry",
+						"Blackberry",
+						"Chanterelle",
+						"Hazelnut",
+						"Purple Mushroom",
+						"Wild Plum",
+						"Crystal Fruit",
+						"Snow Yam",
 						"Winter Root"
 					],
-					"MaxNumItemsSoldInItemStock": 15,
-					"Stock": 5
+					"MaxNumItemsSoldInItemStock": 20,
+					"Stock": 20
 				}
 			]
 		},
@@ -140,13 +152,6 @@
 			"SignObjectIndex": "691",
 			"DefaultSellPriceMultiplier": 2.0,
 			"ItemStocks": [
-				{
-					"ItemType": "Object",
-					"ItemNames": [
-						"Trout Soup"
-					],
-					"Stock": 3
-				},
 				{
 					"ItemType": "Object",
 					"ItemNames": [
@@ -180,10 +185,18 @@
 				{
 					"ItemType": "Object",
 					"ItemNames": [
-						"Catfish",
-						"Octopus"
+						"%Category:Fish",
+						"%Category:Fish",
+						"%Category:Fish",
+						"%Category:Fish",
+						"%Category:Fish",
+						"%Category:Fish",
+						"%Category:Fish",
+						"%Category:Fish",
+						"%Category:Fish",
+						"%Category:Fish"
 					],
-					"MaxNumItemsSoldInItemStock": 2,
+					"MaxNumItemsSoldInItemStock": 10,
 					"Stock": 2
 				}
 			]
@@ -251,9 +264,8 @@
 						"Summer Spangle",
 						"Blue Jazz"
 					],
-					"FilterSeedsBySeason": true,
 					"MaxNumItemsSoldInItemStock": 30,
-					"Stock": 3
+					"Stock": 15
 				},
 				{
 					"ItemType": "Object",
@@ -606,7 +618,7 @@
 						"Mahonia Tea",
 						"Christmas Rose Tea"
 					],
-					"Stock": 3
+					"Stock": 10
 				},
 				{
 					"ItemType": "Object",
@@ -622,13 +634,15 @@
 					"ItemNames": [
 						"Tea Leaves"
 					],
-					"Stock": 4
+					"FilterBySeason": false,
+					"Stock": 10
 				},
 				{
 					"ItemType": "Object",
 					"ItemNames": [
 						"Tea Sapling"
 					],
+					"FilterBySeason": false,
 					"SellPriceMultiplier": 4.0,
 					"Stock": 2
 				},
@@ -637,7 +651,6 @@
 					"ItemNames": [
 						"Tea Set"
 					],
-					"StockPrice": 20000,
 					"Stock": 1
 				},
 				{
@@ -685,8 +698,8 @@
 						"Stone Parrot"
 					],
 					"StockPrice": 1000,
-					"Stock": 2,
-					"MaxNumItemsSoldInItemStock": 4,
+					"Stock": 1,
+					"MaxNumItemsSoldInItemStock": 2,
 					"ItemType": "BigCraftable"
 				},
 				{
@@ -742,21 +755,50 @@
 				{
 					"ItemType": "Pants",
 					"ItemNames": [
-						"%Match:Pants",
-						"%Match:Pants",
-						"%Match:Pants",
-						"%Match:Pants",
-						"%Match:Pants",
-						"%Match:Pants",
-						"%Match:Pants",
-						"%Match:Shirt",
-						"%Match:Shirt",
-						"%Match:Shirt",
-						"%Match:Shirt",
-						"%Match:Shirt",
-						"%Match:Shirt",
-						"%Match:Shirt",
-						"%Match:Shirt"
+						"%Category:Pants",
+						"%Category:Pants",
+						"%Category:Pants",
+						"%Category:Pants",
+						"%Category:Pants",
+						"%Category:Pants",
+						"%Category:Pants",
+						"%Category:Pants",
+						"%Category:Pants",
+						"%Category:Pants"
+					],
+					"StockPrice": 1000,
+					"Stock": 1
+				},
+				{
+					"ItemType": "Shirt",
+					"ItemNames": [
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+						"%Category:Shirt",
+					],
+					"StockPrice": 1000,
+					"Stock": 1
+				},
+				{
+					"ItemType": "Hat",
+					"ItemNames": [
+						"%Match:Beanie",
+						"%Match:Beanie",
+						"%Match:Beanie",
+						"%Match:Beanie",
+						"%Match:Beanie"
 					],
 					"StockPrice": 1000,
 					"Stock": 1
@@ -1044,10 +1086,7 @@
 					"ItemNames": [
 						"Sunflower"
 					],
-					"When": [
-						"z spring/z winter"
-					],
-					"Stock": 4,
+					"Stock": 10,
 					"ItemType": "Object",
 					"Quality": 2
 				},
@@ -1079,7 +1118,7 @@
 					],
 					"StockPrice": 1000,
 					"Stock": 1,
-					"ItemType": "Shirt"
+					"ItemType": "Pants"
 				},
 				{
 					"ItemNames": [
@@ -1363,11 +1402,18 @@
 				{
 					"ItemNames": [
 						"Prismatic Shirt",
-						"Prismatic Pants"
 					],
 					"StockPrice": 7050,
 					"Stock": 1,
 					"ItemType": "Shirt"
+				},
+				{
+					"ItemNames": [
+						"Prismatic Pants"
+					],
+					"StockPrice": 7050,
+					"Stock": 1,
+					"ItemType": "Pants"
 				},
 				{
 					"ItemNames": [
@@ -1387,8 +1433,7 @@
 			"Quote": "Pierre's Prime (TM)",
 			"DefaultSellPriceMultiplier": 4.0,
 			"When": [
-				"n MSB_Pierre",
-				"z winter"
+				"n MSB_Pierre"
 			],
 			"ItemStocks": [
 				{
@@ -1400,17 +1445,7 @@
 						"Parsnip",
 						"Potato",
 						"Rhubarb",
-						"Strawberry"
-					],
-					"When": [
-						"z summer/z fall/z winter"
-					],
-					"Stock": 4,
-					"ItemType": "Object",
-					"Quality": 2
-				},
-				{
-					"ItemNames": [
+						"Strawberry",
 						"Blueberry",
 						"Corn",
 						"Hot Pepper",
@@ -1419,17 +1454,7 @@
 						"Radish",
 						"Red Cabbage",
 						"Starfruit",
-						"Tomato"
-					],
-					"When": [
-						"z spring/z fall/z winter"
-					],
-					"Stock": 4,
-					"ItemType": "Object",
-					"Quality": 2
-				},
-				{
-					"ItemNames": [
+						"Tomato",
 						"Amaranth",
 						"Artichoke",
 						"Beet",
@@ -1437,11 +1462,12 @@
 						"Cranberries",
 						"Eggplant",
 						"Grape",
+						"Pickled Beet",
+						"Pickled Pumpkin",
 						"Pumpkin",
-						"Yam"
-					],
-					"When": [
-						"z spring/z summer/z winter"
+						"Yam",
+						"Winter Root",
+						"Powdermelon"
 					],
 					"Stock": 4,
 					"ItemType": "Object",
@@ -1456,17 +1482,7 @@
 						"Parsnip",
 						"Potato",
 						"Rhubarb",
-						"Strawberry"
-					],
-					"When": [
-						"z summer/z fall/z winter"
-					],
-					"Stock": 2,
-					"ItemType": "Object",
-					"Quality": 4
-				},
-				{
-					"ItemNames": [
+						"Strawberry",
 						"Blueberry",
 						"Corn",
 						"Hot Pepper",
@@ -1475,40 +1491,13 @@
 						"Radish",
 						"Red Cabbage",
 						"Starfruit",
-						"Tomato"
-					],
-					"When": [
-						"z spring/z fall/z winter"
-					],
-					"Stock": 2,
-					"ItemType": "Object",
-					"Quality": 4
-				},
-				{
-					"ItemNames": [
+						"Tomato",
 						"Pickled Beet",
 						"Pickled Pumpkin",
 						"Pumpkin",
 						"Yam",
-						"Winter Root"
-					],
-					"When": [
-						"z spring/z summer/z fall"
-					],
-					"Stock": 2,
-					"ItemType": "Object",
-					"Quality": 2
-				},
-				{
-					"ItemNames": [
-						"Pickled Beet",
-						"Pickled Pumpkin",
-						"Pumpkin",
-						"Yam",
-						"Winter Root"
-					],
-					"When": [
-						"z spring/z summer/z fall"
+						"Winter Root",
+						"Powdermelon"
 					],
 					"Stock": 2,
 					"ItemType": "Object",
