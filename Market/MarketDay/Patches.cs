@@ -200,27 +200,27 @@ namespace MarketDay
         }
     }
     
-    // [HarmonyPatch(typeof(NPC))]
-    // [HarmonyPatch("getSchedule")]
-    // //  public Dictionary<int, SchedulePathDescription> getSchedule(int dayOfMonth)
-    // //  if NPC has no schedule for today, and they have a shop to stand next to,
-    // //  schedule them to stand there all day
-    // public class Postfix_getSchedule
-    // {
-    //     public static void Postfix(
-    //         NPC __instance, 
-    //         int dayOfMonth,
-    //         ref Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> __result)
-    //     {
-    //         if (!__instance.IsVillager && __instance is not Child) return;
-    //         if (!MarketDay.Config.NPCOwnerRescheduling) return;
-    //         if (!MarketDay.IsMarketDay) return;
+     //[HarmonyPatch(typeof(NPC))]
+     //[HarmonyPatch("Schedule")]
+     ////  public Dictionary<int, SchedulePathDescription> getSchedule(int dayOfMonth)
+     ////  if NPC has no schedule for today, and they have a shop to stand next to,
+     ////  schedule them to stand there all day
+     //public class Postfix_getSchedule
+     //{
+     //    public static void Postfix(
+     //        NPC __instance, 
+     //        int dayOfMonth,
+     //        ref Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> __result)
+     //    {
+     //        if (!__instance.IsVillager && __instance is not Child) return;
+     //        if (!MarketDay.Config.NPCOwnerRescheduling) return;
+     //        if (!MarketDay.IsMarketDay) return;
 
-    //         if (__result is not null && __result.Count > 0) return;
+     //        if (__result is not null && __result.Count > 0) return;
             
-    //         __result = Schedule.getScheduleWhenNoDefault(__instance, dayOfMonth);
-    //     }
-    // }
+     //        __result = Schedule.getScheduleWhenNoDefault(__instance, dayOfMonth);
+     //    }
+     //}
     
     [HarmonyPatch(typeof(NPC))]
     [HarmonyPatch("getMasterScheduleEntry")]

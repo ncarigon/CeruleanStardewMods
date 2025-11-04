@@ -421,9 +421,9 @@ namespace MarketDay.Utility
                 // which is an opportunity to add another stop for owners or spouses
                 // if the location route takes them via the Town
 
-                var shop = RouteViaOwnedShop(npc, startLoc, endLocationName, getLocationRoute, time, nextStepTime,
+                var shop = MarketDay.Config.NPCOwnerRescheduling ? RouteViaOwnedShop(npc, startLoc, endLocationName, getLocationRoute, time, nextStepTime,
                     minutesAvailable, startPoint, endBehavior, endMessage, endingX, endingY, faceDirection,
-                    masterSchedule, ref stepTime);
+                    masterSchedule, ref stepTime) : null;
 
                 if (shop is null)
                 {
@@ -903,36 +903,36 @@ namespace MarketDay.Utility
             return placesToVisit;
         }
 
-        /// <summary>
-        /// Generate a complete schedule for NPCs without a schedule this day
-        /// </summary>
-        /// <param name="npc"></param>
-        /// <param name="dayOfMonth"></param>
-        /// <returns></returns>
-        public static Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> getScheduleWhenNoDefault(NPC npc, int dayOfMonth)
-        {
-            string there;
-            string back;
+        ///// <summary>
+        ///// Generate a complete schedule for NPCs without a schedule this day
+        ///// </summary>
+        ///// <param name="npc"></param>
+        ///// <param name="dayOfMonth"></param>
+        ///// <returns></returns>
+        //public static Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription> getScheduleWhenNoDefault(NPC npc, int dayOfMonth)
+        //{
+        //    string there;
+        //    string back;
 
-            // do they have a shop of their own?
-            if (MapUtility.NPCShopOwners.TryGetValue(npc.Name, out var shop))
-            {
-                // MarketDay.Log($"getScheduleWhenNoDefault: {npc.Name} has shop {shop.ShopName}", LogLevel.Debug);
-                there = $"a{MarketDay.Config.OpeningTime * 100} Town {shop.OwnerTile.X} {shop.OwnerTile.Y} 2";
-                back = $"{MarketDay.Config.ClosingTime * 100} BusStop -1 23 3";
-                return parseMasterSchedule(npc, $"{there}/{back}");
-            }
+        //    // do they have a shop of their own?
+        //    if (MapUtility.NPCShopOwners.TryGetValue(npc.Name, out var shop))
+        //    {
+        //        // MarketDay.Log($"getScheduleWhenNoDefault: {npc.Name} has shop {shop.ShopName}", LogLevel.Debug);
+        //        there = $"a{MarketDay.Config.OpeningTime * 100} Town {shop.OwnerTile.X} {shop.OwnerTile.Y} 2";
+        //        back = $"{MarketDay.Config.ClosingTime * 100} BusStop -1 23 3";
+        //        return parseMasterSchedule(npc, $"{there}/{back}");
+        //    }
 
-            // are they married to a player?
-            var spouseName = SpouseName(npc);
-            if (spouseName is null) return new Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription>();
-            if (!MapUtility.PlayerShopOwners.TryGetValue(spouseName, out var spouseShop))
-                return new Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription>();
-            // MarketDay.Log($"getScheduleWhenNoDefault: {npc.Name} married to owner of shop {spouseShop.ShopName}", LogLevel.Trace);
-            there = $"a{MarketDay.Config.OpeningTime * 100} Town {spouseShop.OwnerTile.X} {spouseShop.OwnerTile.Y} 2";
-            back = $"{MarketDay.Config.ClosingTime * 100} BusStop -1 23 3";
-            return parseMasterSchedule(npc, $"{there}/{back}");
-        }
+        //    // are they married to a player?
+        //    var spouseName = SpouseName(npc);
+        //    if (spouseName is null) return new Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription>();
+        //    if (!MapUtility.PlayerShopOwners.TryGetValue(spouseName, out var spouseShop))
+        //        return new Dictionary<int, StardewValley.Pathfinding.SchedulePathDescription>();
+        //    // MarketDay.Log($"getScheduleWhenNoDefault: {npc.Name} married to owner of shop {spouseShop.ShopName}", LogLevel.Trace);
+        //    there = $"a{MarketDay.Config.OpeningTime * 100} Town {spouseShop.OwnerTile.X} {spouseShop.OwnerTile.Y} 2";
+        //    back = $"{MarketDay.Config.ClosingTime * 100} BusStop -1 23 3";
+        //    return parseMasterSchedule(npc, $"{there}/{back}");
+        //}
 
         private static string SaloonTile()
         {
