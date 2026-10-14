@@ -1590,11 +1590,13 @@ namespace MarketDay
                         System.Threading.Thread.Sleep(100);
                     }
                     return !CancellationChecks.IsCancelled;
-                } else if (
-                    helper.ModRegistry.IsLoaded("ceruleandeep.MarketDay.Wizard") // config wizard is installed
+                }
+                if (helper.ModRegistry.IsLoaded("ceruleandeep.MarketDay.Wizard") // config wizard is installed
                     && !Game1.player.eventsSeen.Contains("117780001")) // host hasn't seen config event with lewis yet
                 {
-                    return false;
+                    CancellationChecks.CheckedToday = true;
+                    CancellationChecks.Reason = "false";
+                    return !CancellationChecks.IsCancelled;
                 }
 
                 var festival = StardewValley.Utility.isFestivalDay(Game1.dayOfMonth, Game1.season);
