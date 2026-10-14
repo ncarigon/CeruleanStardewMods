@@ -1,5 +1,5 @@
 {
-    "Format": "1.25.0",
+    "Format": "2.0.0",
     "ConfigSchema": {
         "Rugs": {
             "AllowValues": "Festive Rugs, Red Ones, Plain Ole Ground",
